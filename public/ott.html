@@ -1,0 +1,778 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Media Bills | PennyWise</title>
+  <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;600&display=swap" rel="stylesheet">
+  <style>
+    :root {
+      --primary-color: #ff3366;
+      --secondary-color: #4CAF50;
+      --accent-color: #2196F3;
+      --dark-bg: #111;
+      --darker-bg: #000;
+      --light-text: #fff;
+      --border-color: #333;
+      --button-hover: #e02d5a;
+      --button-secondary: #3e8e41;
+      --button-accent: #0b7dda;
+    }
+    
+    * { box-sizing: border-box; }
+    body {
+      margin: 0;
+      background-color: var(--dark-bg);
+      color: var(--light-text);
+      font-family: 'Poppins', sans-serif;
+      padding: 0;
+      min-height: 100vh;
+    }
+
+    /* NAVIGATION BAR */
+    .navbar {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      background-color: #0d0d0d;
+      padding: 20px;
+      position: sticky;
+      top: 0;
+      z-index: 1000;
+      transition: all 0.5s ease;
+      border-bottom: 1px solid #b3003c;
+    }
+    .navbar-links {
+      display: flex;
+      gap: 15px;
+      align-items: center;
+    }
+    .navbar a {
+      color: #f5f5f5;
+      text-decoration: none;
+      font-size: 18px;
+      font-family: 'Poppins', sans-serif;
+      transition: color 0.3s ease;
+    }
+    .navbar a:hover {
+      color: #ff3366;
+    }
+    .navbar img {
+      height: 120px;
+      transition: height 0.5s ease;
+    }
+    .shrink {
+      padding: 10px;
+    }
+    .shrink img {
+      height: 90px;
+    }
+
+    /* PLUS BUTTON STYLES */
+    .plus-button {
+      background-color: #FFD700;
+      color: #0d0d0d;
+      width: 36px;
+      height: 36px;
+      border-radius: 8px;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      font-size: 22px;
+      font-weight: bold;
+      cursor: pointer;
+      transition: all 0.3s ease;
+      position: relative;
+      margin-right: 5px;
+    }
+    .plus-button:hover {
+      background-color: #ffeb3b;
+      transform: scale(1.1);
+    }
+
+    /* PROFILE PICTURE DROPDOWN - UPDATED FOR CIRCULAR CROP */
+    .profile-dropdown {
+      position: relative;
+      margin-left: 10px;
+    }
+    .profile-pic-container {
+      width: 44px; /* Slightly larger to account for border */
+      height: 44px;
+      border-radius: 50%;
+      overflow: hidden;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      border: 2px solid #ff3366;
+      transition: all 0.3s ease;
+      background-color: #333;
+    }
+    .profile-pic {
+      width: 100%;
+      height: 100%;
+      object-fit: cover;
+      cursor: pointer;
+      transition: all 0.3s ease;
+    }
+    .profile-pic-container:hover {
+      transform: scale(1.1);
+      border-color: #ffeb3b;
+    }
+    .profile-menu {
+      position: absolute;
+      top: 100%;
+      right: 0;
+      background-color: #1a1a1a;
+      border-radius: 8px;
+      padding: 10px 0;
+      min-width: 150px;
+      box-shadow: 0 8px 16px rgba(0,0,0,0.3);
+      opacity: 0;
+      visibility: hidden;
+      transition: all 0.3s ease;
+      z-index: 1001;
+    }
+    .profile-dropdown.active .profile-menu {
+      opacity: 1;
+      visibility: visible;
+      transform: translateY(10px);
+    }
+    .profile-menu a {
+      display: block;
+      padding: 10px 20px;
+      color: #f5f5f5;
+      font-family: 'Poppins', sans-serif;
+      font-size: 16px;
+      transition: all 0.2s ease;
+    }
+    .profile-menu a:hover {
+      background-color: #ff3366;
+      color: white;
+      padding-left: 25px;
+    }
+
+    /* DROPDOWN MENU */
+    .dropdown-menu {
+      position: absolute;
+      top: 100%;
+      left: 0;
+      background-color: #1a1a1a;
+      border-radius: 8px;
+      padding: 10px 0;
+      min-width: 180px;
+      box-shadow: 0 8px 16px rgba(0,0,0,0.3);
+      opacity: 0;
+      visibility: hidden;
+      transition: all 0.3s ease;
+      z-index: 1001;
+    }
+    .plus-button.active .dropdown-menu {
+      opacity: 1;
+      visibility: visible;
+      transform: translateY(10px);
+    }
+    .dropdown-menu a {
+      display: block;
+      padding: 10px 20px;
+      color: #f5f5f5;
+      font-family: 'Poppins', sans-serif;
+      font-size: 16px;
+      transition: all 0.2s ease;
+    }
+    .dropdown-menu a:hover {
+      background-color: #ff3366;
+      color: white;
+      padding-left: 25px;
+    }
+
+    /* PAGE STYLES */
+    .container {
+      max-width: 900px;
+      margin: 60px auto;
+      padding: 30px;
+      background-color: var(--darker-bg);
+      border-radius: 10px;
+      box-shadow: 0 0 15px rgba(0, 0, 0, 0.5);
+      border: 1px solid var(--border-color);
+    }
+
+    h1 {
+      text-align: center;
+      color: var(--primary-color);
+      font-size: 2.5rem;
+      margin-bottom: 10px;
+    }
+
+    .tagline {
+      text-align: center;
+      font-size: 1.2rem;
+      color: var(--light-text);
+      margin-bottom: 40px;
+      font-style: italic;
+    }
+
+    .filter-container {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      margin-bottom: 30px;
+      flex-wrap: wrap;
+      gap: 15px;
+    }
+
+    .filter-container h3 {
+      margin: 0;
+      color: var(--primary-color);
+      font-weight: 600;
+    }
+
+    .sort-group {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+    }
+
+    .sort-group label {
+      font-weight: 600;
+      color: var(--primary-color);
+    }
+
+    .sort-group select {
+      padding: 10px 15px;
+      border-radius: 8px;
+      background-color: var(--dark-bg);
+      color: var(--light-text);
+      border: 2px solid var(--border-color);
+      font-family: 'Poppins', sans-serif;
+    }
+
+    .sort-group select:focus {
+      outline: none;
+      border-color: var(--primary-color);
+    }
+
+    .media-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fill, minmax(250px, 1fr));
+      gap: 25px;
+      margin-top: 30px;
+    }
+
+    .media-card {
+      background-color: #222;
+      border-radius: 10px;
+      overflow: hidden;
+      transition: all 0.3s ease;
+      border-left: 4px solid var(--primary-color);
+      display: flex;
+      flex-direction: column;
+    }
+
+    .media-card:hover {
+      transform: translateY(-5px);
+      box-shadow: 0 10px 20px rgba(0, 0, 0, 0.3);
+    }
+
+    .media-logo {
+      width: 100%;
+      height: 150px;
+      object-fit: contain;
+      background-color: #000;
+      padding: 20px;
+    }
+
+    .media-details {
+      padding: 20px;
+      flex-grow: 1;
+      display: flex;
+      flex-direction: column;
+    }
+
+    .media-name {
+      font-size: 1.3rem;
+      font-weight: 600;
+      margin-bottom: 10px;
+      color: var(--light-text);
+    }
+
+    .media-price {
+      font-size: 1.5rem;
+      font-weight: bold;
+      color: var(--secondary-color);
+      margin-bottom: 15px;
+    }
+
+    .media-plan {
+      font-size: 0.9rem;
+      color: #ccc;
+      margin-bottom: 20px;
+      flex-grow: 1;
+    }
+
+    .media-btn-container {
+      margin-top: auto;
+    }
+
+    .media-btn {
+      display: block;
+      width: 100%;
+      padding: 12px;
+      background-color: var(--accent-color);
+      color: white;
+      text-align: center;
+      text-decoration: none;
+      border-radius: 5px;
+      font-weight: 600;
+      transition: all 0.3s ease;
+      border: none;
+      cursor: pointer;
+      font-family: 'Poppins', sans-serif;
+    }
+
+    .media-btn:hover {
+      background-color: var(--button-accent);
+      transform: translateY(-2px);
+    }
+
+    .total-section {
+      margin-top: 40px;
+      padding: 20px;
+      background-color: #222;
+      border-radius: 10px;
+      text-align: center;
+    }
+
+    .total-amount {
+      font-size: 1.8rem;
+      color: var(--primary-color);
+      font-weight: bold;
+      margin-top: 10px;
+    }
+
+    @media (max-width: 768px) {
+      .navbar {
+        padding: 15px 20px;
+        flex-direction: column;
+        text-align: center;
+      }
+      .navbar-links {
+        margin-top: 15px;
+        flex-wrap: wrap;
+        justify-content: center;
+      }
+      .navbar a {
+        margin: 5px 10px;
+      }
+      .container {
+        margin: 30px auto;
+        padding: 20px;
+      }
+      .filter-container {
+        flex-direction: column;
+        align-items: flex-start;
+      }
+      .media-grid {
+        grid-template-columns: 1fr;
+        gap: 20px;
+      }
+    }
+  </style>
+</head>
+<body>
+
+  <!-- Navigation Bar -->
+  <div class="navbar" id="navbar">
+    <div>
+      <img src="logo.png" alt="Logo">
+    </div>
+    <div class="navbar-links">
+      <div class="plus-button">
+        +
+        <div class="dropdown-menu">
+          <a href="wish.html">My Wish</a>
+          <a href="aspiration.html">My Aspiration</a>
+        </div>
+      </div>
+      <a href="dashboard.html">Home</a>
+      <a href="BudgetTrack.html">Track</a>
+      <a href="Recharge.html">Recharge</a>
+      <a href="about.html">About Us</a>
+      <div class="profile-dropdown">
+        <div class="profile-pic-container">
+          <img id="profilePicture" class="profile-pic" src="pfp.png" alt="Profile">
+        </div>
+        <div class="profile-menu">
+          <a href="pf.html">Profile</a>
+          <a href="login.html">Logout</a>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <div class="container">
+    <h1>Media Bills</h1>
+    <div class="tagline">Manage your entertainment subscriptions in one place</div>
+    
+    <div class="filter-container">
+      <h3>Indian Streaming Services</h3>
+      <div class="sort-group">
+        <label for="sort-by">Sort by:</label>
+        <select id="sort-by">
+          <option value="price-asc">Price: Low to High</option>
+          <option value="price-desc">Price: High to Low</option>
+          <option value="name-asc">Name: A to Z</option>
+          <option value="name-desc">Name: Z to A</option>
+        </select>
+      </div>
+    </div>
+    
+    <div class="media-grid" id="media-grid">
+      <!-- Media cards will be inserted here by JavaScript -->
+    </div>
+    
+    <div class="total-section">
+      <h3>Your Monthly Media Expenses</h3>
+      <div class="total-amount" id="total-amount">₹0</div>
+    </div>
+  </div>
+
+  <script>
+    document.addEventListener('DOMContentLoaded', function() {
+      // Load profile picture from localStorage
+      const profilePic = document.getElementById('profilePicture');
+      
+      // Check if profileData exists in localStorage and has a profilePicture
+      try {
+        const profileData = JSON.parse(localStorage.getItem('profileData'));
+        if (profileData && profileData.profilePicture) {
+          profilePic.src = profileData.profilePicture;
+        }
+      } catch (e) {
+        console.error('Error parsing profile data from localStorage:', e);
+      }
+
+      // Plus button functionality
+      const plusButton = document.querySelector('.plus-button');
+      plusButton.addEventListener('click', function(e) {
+        e.stopPropagation();
+        this.classList.toggle('active');
+      });
+      
+      // Profile dropdown functionality
+      const profileDropdown = document.querySelector('.profile-dropdown');
+      profileDropdown.addEventListener('click', function(e) {
+        e.stopPropagation();
+        this.classList.toggle('active');
+      });
+      
+      // Close dropdowns when clicking outside
+      document.addEventListener('click', function() {
+        plusButton.classList.remove('active');
+        profileDropdown.classList.remove('active');
+      });
+
+      // Navbar shrink on scroll
+      window.addEventListener('scroll', function() {
+        var navbar = document.querySelector('.navbar');
+        if (window.scrollY > 50) {
+          navbar.classList.add('shrink');
+        } else {
+          navbar.classList.remove('shrink');
+        }
+      });
+    });
+
+    // Indian streaming services data (prices in INR)
+    const streamingServices = [
+      {
+        name: "Netflix",
+        logo: "https://upload.wikimedia.org/wikipedia/commons/0/08/Netflix_2015_logo.svg",
+        plans: [
+          { name: "Mobile", price: 149, resolution: "480p", devices: 1 },
+          { name: "Basic", price: 199, resolution: "720p", devices: 1 },
+          { name: "Standard", price: 499, resolution: "1080p", devices: 2 },
+          { name: "Premium", price: 649, resolution: "4K+HDR", devices: 4 }
+        ],
+        link: "https://www.netflix.com/in/"
+      },
+      {
+        name: "Amazon Prime Video",
+        logo: "https://upload.wikimedia.org/wikipedia/commons/1/11/Amazon_Prime_Video_logo.svg",
+        plans: [
+          { name: "Monthly", price: 179, resolution: "4K", devices: 2 },
+          { name: "Annual", price: 1499, resolution: "4K", devices: 2 }
+        ],
+        link: "https://www.primevideo.com/"
+      },
+      {
+        name: "Disney+ Hotstar",
+        logo: "https://upload.wikimedia.org/wikipedia/commons/6/64/Disney%2B_Hotstar_logo.svg",
+        plans: [
+          { name: "Mobile", price: 149, resolution: "480p", devices: 1 },
+          { name: "Super", price: 299, resolution: "1080p", devices: 2 },
+          { name: "Premium", price: 1499, resolution: "4K", devices: 4 }
+        ],
+        link: "https://www.hotstar.com/in"
+      },
+      {
+        name: "SonyLIV",
+        logo: "https://upload.wikimedia.org/wikipedia/commons/4/48/SonyLIV_logo.svg",
+        plans: [
+          { name: "Premium", price: 299, resolution: "1080p", devices: 1 },
+          { name: "Annual", price: 999, resolution: "1080p", devices: 1 }
+        ],
+        link: "https://www.sonyliv.com/"
+      },
+      {
+        name: "Zee5",
+        logo: "https://upload.wikimedia.org/wikipedia/commons/8/8a/Zee5_Official_Logo.svg",
+        plans: [
+          { name: "Monthly", price: 99, resolution: "1080p", devices: 2 },
+          { name: "Annual", price: 999, resolution: "1080p", devices: 2 }
+        ],
+        link: "https://www.zee5.com/"
+      },
+      {
+        name: "Voot",
+        logo: "https://upload.wikimedia.org/wikipedia/commons/7/77/Voot_logo.svg",
+        plans: [
+          { name: "Select", price: 99, resolution: "1080p", devices: 1 },
+          { name: "Premium", price: 299, resolution: "1080p", devices: 2 }
+        ],
+        link: "https://www.voot.com/"
+      },      
+      {
+        name: "MX Player",
+        logo: "https://upload.wikimedia.org/wikipedia/commons/7/77/MX_Player_logo.svg",
+        plans: [
+          { name: "VIP", price: 99, resolution: "1080p", devices: 1 },
+          { name: "Premium", price: 299, resolution: "1080p", devices: 2 }
+        ],
+        link: "https://www.mxplayer.in/"
+      },
+      {
+        name: "JioCinema",
+        logo: "https://upload.wikimedia.org/wikipedia/commons/0/0e/JioCinema_Logo.svg",
+        plans: [
+          { name: "Premium", price: 999, resolution: "4K", devices: 4 }
+        ],
+        link: "https://www.jiocinema.com/"
+      },
+      {
+        name: "ALTBalaji",
+        logo: "https://upload.wikimedia.org/wikipedia/commons/6/6a/Altbalaji_logo.svg",
+        plans: [
+          { name: "Annual", price: 300, resolution: "1080p", devices: 1 }
+        ],
+        link: "https://altbalaji.com/"
+      },
+      {
+        name: "Sun NXT",
+        logo: "https://upload.wikimedia.org/wikipedia/commons/2/2e/Sun_NXT_logo.svg",
+        plans: [
+          { name: "Monthly", price: 99, resolution: "1080p", devices: 1 },
+          { name: "Annual", price: 599, resolution: "1080p", devices: 1 }
+        ],
+        link: "https://www.sunnxt.com/"
+      },
+      {
+        name: "Eros Now",
+        logo: "https://upload.wikimedia.org/wikipedia/commons/4/4e/Eros_Now_logo.svg",
+        plans: [
+          { name: "Monthly", price: 49, resolution: "1080p", devices: 1 },
+          { name: "Annual", price: 399, resolution: "1080p", devices: 1 }
+        ],
+        link: "https://erosnow.com/"
+      },
+      {
+        name: "Hoichoi",
+        logo: "https://upload.wikimedia.org/wikipedia/commons/3/3e/Hoichoi_TV_logo.svg",
+        plans: [
+          { name: "Monthly", price: 99, resolution: "1080p", devices: 1 },
+          { name: "Annual", price: 499, resolution: "1080p", devices: 1 }
+        ],
+        link: "https://www.hoichoi.tv/"
+      }
+    ];
+
+    // Format number to Indian place value system
+    function formatINR(value) {
+      return '₹' + value.toLocaleString('en-IN');
+    }
+
+    // Get minimum price from plans
+    function getMinPrice(plans) {
+      return Math.min(...plans.map(plan => plan.price));
+    }
+
+    // Display media cards
+    function displayMediaCards(services) {
+      const mediaGrid = document.getElementById('media-grid');
+      mediaGrid.innerHTML = '';
+      
+      let totalMonthly = 0;
+      
+      services.forEach(service => {
+        // Get the cheapest plan for display
+        const cheapestPlan = service.plans.reduce((min, plan) => 
+          plan.price < min.price ? plan : min
+        );
+        
+        totalMonthly += cheapestPlan.price;
+        
+        const card = document.createElement('div');
+        card.className = 'media-card';
+        card.innerHTML = `
+          <img src="${service.logo}" alt="${service.name}" class="media-logo">
+          <div class="media-details">
+            <div class="media-name">${service.name}</div>
+            <div class="media-price">${formatINR(cheapestPlan.price)}/mo</div>
+            <div class="media-plan">${cheapestPlan.name} Plan (${cheapestPlan.resolution})</div>
+            <div class="media-btn-container">
+              <a href="${service.link}" target="_blank" class="media-btn">View Plans</a>
+            </div>
+          </div>
+        `;
+        mediaGrid.appendChild(card);
+      });
+      
+      // Update total amount
+      document.getElementById('total-amount').textContent = formatINR(totalMonthly);
+    }
+
+    // Sort media services
+    function sortMedia(sortBy) {
+      let sortedServices = [...streamingServices];
+      
+      switch(sortBy) {
+        case 'price-asc':
+          sortedServices.sort((a, b) => 
+            getMinPrice(a.plans) - getMinPrice(b.plans)
+          );
+          break;
+        case 'price-desc':
+          sortedServices.sort((a, b) => 
+            getMinPrice(b.plans) - getMinPrice(a.plans)
+          );
+          break;
+        case 'name-asc':
+          sortedServices.sort((a, b) => a.name.localeCompare(b.name));
+          break;
+        case 'name-desc':
+          sortedServices.sort((a, b) => b.name.localeCompare(a.name));
+          break;
+      }
+      
+      return sortedServices;
+    }
+
+    // Initial display
+    displayMediaCards(sortMedia('price-asc'));
+
+    // Handle sort change
+    document.getElementById('sort-by').addEventListener('change', (e) => {
+      const sortedServices = sortMedia(e.target.value);
+      displayMediaCards(sortedServices);
+    });
+  </script>
+
+</body>
+<!-- Footer Section -->
+<footer style="background-color: #0d0d0d; color: #f5f5f5; font-family: 'Poppins', sans-serif; padding: 50px 0 20px; border-top: 1px solid #b3003c;">
+  <div style="max-width: 1200px; margin: 0 auto; padding: 0 20px;">
+    <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(250px, 1fr)); gap: 40px; margin-bottom: 40px;">
+      
+      <!-- About Column -->
+      <div>
+        <h3 style="color: #ff3366; font-size: 1.5rem; margin-bottom: 20px; position: relative; padding-bottom: 10px;">
+          About PennyWise
+          <span style="position: absolute; bottom: 0; left: 0; width: 60px; height: 2px; background: #ff3366;"></span>
+        </h3>
+        <p style="color: #ddd; line-height: 1.6; margin-bottom: 20px;">
+          Your personal financial companion helping you track expenses, manage budgets, and achieve your financial goals.
+        </p>
+        <div style="display: flex; gap: 15px;">
+          <a href="#" style="color: #f5f5f5; font-size: 1.5rem; transition: color 0.3s ease;"><i class="fab fa-facebook"></i></a>
+          <a href="https://x.com/pennywisecorps" target="_blank" style="color: #f5f5f5; font-size: 1.5rem; transition: color 0.3s ease;">
+            <i class="fab fa-twitter"></i>
+          </a>
+          <a href="https://www.instagram.com/pennywisecorps" target="_blank" style="color: #f5f5f5; font-size: 1.5rem; transition: color 0.3s ease;">
+            <i class="fab fa-instagram"></i>
+          </a>
+          <a href="#" style="color: #f5f5f5; font-size: 1.5rem; transition: color 0.3s ease;"><i class="fab fa-linkedin"></i></a>
+        </div>
+      </div>
+
+      <!-- Quick Links Column -->
+      <div>
+        <h3 style="color: #ff3366; font-size: 1.5rem; margin-bottom: 20px; position: relative; padding-bottom: 10px;">
+          Quick Links
+          <span style="position: absolute; bottom: 0; left: 0; width: 60px; height: 2px; background: #ff3366;"></span>
+        </h3>
+        <ul style="list-style: none; padding: 0; margin: 0;">
+          <li style="margin-bottom: 10px;"><a href="dashboard.html" style="color: #ddd; text-decoration: none; transition: color 0.3s ease; display: block;">Home</a></li>
+          <li style="margin-bottom: 10px;"><a href="BudgetTrack.html" style="color: #ddd; text-decoration: none; transition: color 0.3s ease; display: block;">Track Budget</a></li>
+          <li style="margin-bottom: 10px;"><a href="Recharge.html" style="color: #ddd; text-decoration: none; transition: color 0.3s ease; display: block;">Recharge</a></li>
+          <li style="margin-bottom: 10px;"><a href="about.html" style="color: #ddd; text-decoration: none; transition: color 0.3s ease; display: block;">About Us</a></li>
+          <li style="margin-bottom: 10px;"><a href="login.html" style="color: #ddd; text-decoration: none; transition: color 0.3s ease; display: block;">Login/Signup</a></li>
+        </ul>
+      </div>
+
+      <!-- Contact Column -->
+      <div>
+        <h3 style="color: #ff3366; font-size: 1.5rem; margin-bottom: 20px; position: relative; padding-bottom: 10px;">
+          Contact Us
+          <span style="position: absolute; bottom: 0; left: 0; width: 60px; height: 2px; background: #ff3366;"></span>
+        </h3>
+        <ul style="list-style: none; padding: 0; margin: 0;">
+          <li style="margin-bottom: 15px; display: flex; align-items: flex-start;">
+            <i class="fas fa-map-marker-alt" style="color: #ff3366; margin-right: 10px; margin-top: 3px;"></i>
+            <span style="color: #ddd;">123 Financial Street, Money City, MC 12345</span>
+          </li>
+          <li style="margin-bottom: 15px; display: flex; align-items: center;">
+            <i class="fas fa-phone-alt" style="color: #ff3366; margin-right: 10px;"></i>
+            <span style="color: #ddd;">+91 0123456789</span>
+          </li>
+          <li style="margin-bottom: 15px; display: flex; align-items: center;">
+            <i class="fas fa-envelope" style="color: #ff3366; margin-right: 10px;"></i>
+            <span style="color: #ddd;">pennywisecorps@gmail.com</span>
+          </li>
+        </ul>
+      </div>
+
+      <!-- Newsletter Column -->
+      <div>
+        <h3 style="color: #ff3366; font-size: 1.5rem; margin-bottom: 20px; position: relative; padding-bottom: 10px;">
+          Newsletter
+          <span style="position: absolute; bottom: 0; left: 0; width: 60px; height: 2px; background: #ff3366;"></span>
+        </h3>
+        <p style="color: #ddd; line-height: 1.6; margin-bottom: 20px;">
+          Subscribe to our newsletter for financial tips and updates.
+        </p>
+        <form style="display: flex; flex-wrap: wrap; gap: 10px; margin-top: 10px;">
+          <input type="email" placeholder="Your email" 
+                 style="flex: 1; min-width: 200px; padding: 12px 15px; border: none; border-radius: 5px; font-family: 'Poppins', sans-serif;">
+          <button type="submit" 
+                  style="background-color: #ff3366; color: white; border: none; padding: 12px 20px; border-radius: 5px; cursor: pointer; transition: background-color 0.3s ease;">
+            <i class="fas fa-paper-plane"></i>
+          </button>
+        </form>
+      </div>
+    </div>
+
+    <!-- Copyright -->
+    <div style="border-top: 1px solid #333; padding-top: 30px; text-align: center;">
+      <p style="color: #aaa; margin: 0 0 10px;">
+        &copy; 2025 PennyWise. All Rights Reserved.
+      </p>
+      <div style="display: flex; justify-content: center; flex-wrap: wrap; gap: 20px;">
+        <a href="#" style="color: #aaa; text-decoration: none; transition: color 0.3s ease;">Privacy Policy</a>
+        <a href="#" style="color: #aaa; text-decoration: none; transition: color 0.3s ease;">Terms of Service</a>
+        <a href="#" style="color: #aaa; text-decoration: none; transition: color 0.3s ease;">Sitemap</a>
+      </div>
+    </div>
+
+  </div>
+</footer>
+
+</html>

@@ -1,0 +1,668 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>My Wish | PennyWise</title>
+  <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;600&display=swap" rel="stylesheet">
+  <style>
+    :root {
+      --primary-color: #ff3366;
+      --secondary-color: #4CAF50;
+      --accent-color: #2196F3;
+      --dark-bg: #111;
+      --darker-bg: #000;
+      --light-text: #fff;
+      --border-color: #333;
+      --button-hover: #e02d5a;
+      --button-secondary: #3e8e41;
+      --button-accent: #0b7dda;
+    }
+    * { box-sizing: border-box; }
+    body {
+      margin: 0;
+      background-color: var(--dark-bg);
+      color: var(--light-text);
+      font-family: 'Poppins', sans-serif;
+      min-height: 100vh;
+    }
+    /* NAVIGATION BAR */
+    .navbar {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      background-color: var(--darker-bg);
+      padding: 20px 40px;
+      position: sticky;
+      top: 0;
+      z-index: 1000;
+      border-bottom: 1px solid var(--primary-color);
+      transition: all 0.5s ease;
+    }
+    .navbar img { height: 120px; transition: height 0.5s ease; }
+    .navbar-links { display: flex; gap: 15px; align-items: center; }
+    .navbar a {
+      color: var(--light-text);
+      text-decoration: none;
+      font-size: 18px;
+      transition: color 0.3s ease;
+    }
+    .navbar a:hover { color: var(--primary-color); }
+    .plus-button {
+      background-color: #FFD700;
+      color: #0d0d0d;
+      width: 36px; height: 36px;
+      border-radius: 8px;
+      display: flex; justify-content: center; align-items: center;
+      font-size: 22px; font-weight: bold; cursor: pointer;
+      position: relative; transition: all 0.3s ease;
+      margin-right: 5px;
+    }
+    .plus-button:hover { background-color: #ffeb3b; transform: scale(1.1); }
+    .dropdown-menu {
+      position: absolute; top:100%; left:0;
+      background-color:#1a1a1a; border-radius:8px;
+      padding:10px 0; min-width:180px;
+      box-shadow:0 8px 16px rgba(0,0,0,0.3);
+      opacity:0; visibility:hidden; transform:translateY(-10px);
+      transition:all 0.3s ease; z-index:1001;
+    }
+    .plus-button.active .dropdown-menu {
+      opacity:1; visibility:visible; transform:translateY(0);
+    }
+    .dropdown-menu a {
+      display:block; padding:10px 20px;
+      color:#f5f5f5; font-size:16px;
+      transition:padding-left 0.2s ease;
+    }
+    .dropdown-menu a:hover {
+      background-color:var(--primary-color); padding-left:25px;
+    }
+    .dropdown-menu a:first-child {
+      border-top-left-radius:8px; border-top-right-radius:8px;
+    }
+    .dropdown-menu a:last-child {
+      border-bottom-left-radius:8px; border-bottom-right-radius:8px;
+    }
+    .shrink { padding:10px 40px; }
+    .shrink img { height:90px; }
+
+    /* PROFILE PICTURE DROPDOWN */
+    .profile-dropdown {
+      position: relative;
+      margin-left: 10px;
+    }
+    .profile-pic-container {
+      width: 44px;
+      height: 44px;
+      border-radius: 50%;
+      overflow: hidden;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      border: 2px solid var(--primary-color);
+      transition: all 0.3s ease;
+      background-color: #333;
+    }
+    .profile-pic {
+      width: 100%;
+      height: 100%;
+      object-fit: cover;
+      cursor: pointer;
+      transition: all 0.3s ease;
+    }
+    .profile-pic-container:hover {
+      transform: scale(1.1);
+      border-color: #ffeb3b;
+    }
+    .profile-menu {
+      position: absolute;
+      top: 100%;
+      right: 0;
+      background-color: #1a1a1a;
+      border-radius: 8px;
+      padding: 10px 0;
+      min-width: 150px;
+      box-shadow: 0 8px 16px rgba(0,0,0,0.3);
+      opacity: 0;
+      visibility: hidden;
+      transition: all 0.3s ease;
+      z-index: 1001;
+    }
+    .profile-dropdown.active .profile-menu {
+      opacity: 1;
+      visibility: visible;
+      transform: translateY(10px);
+    }
+    .profile-menu a {
+      display: block;
+      padding: 10px 20px;
+      color: #f5f5f5;
+      font-size: 16px;
+      transition: all 0.2s ease;
+    }
+    .profile-menu a:hover {
+      background-color: var(--primary-color);
+      color: white;
+      padding-left: 25px;
+    }
+
+    .container {
+      max-width:800px;
+      margin:60px auto;
+      padding:30px;
+      background-color:var(--darker-bg);
+      border-radius:10px;
+      box-shadow:0 0 15px rgba(0,0,0,0.5);
+      border:1px solid var(--border-color);
+    }
+
+    .hero-text {
+      text-align:center; margin-bottom:30px;
+    }
+    .hero-text h1 {
+      color:var(--primary-color); font-size:2.5rem; margin-bottom:15px;
+    }
+    .hero-text p {
+      color:#ccc; font-size:1.1rem; line-height:1.6; margin-bottom:25px;
+    }
+
+    .plan-btn {
+      background-color:var(--primary-color);
+      color:white;
+      padding:14px 30px;
+      font-size:1.1rem;
+      font-weight:600;
+      border:none;
+      border-radius:8px;
+      cursor:pointer;
+      transition:all 0.3s ease;
+      margin:0 auto 30px;
+      display:block;
+      box-shadow:0 4px 6px rgba(0,0,0,0.1);
+    }
+    .plan-btn:hover {
+      background-color:var(--button-hover);
+      transform:translateY(-2px);
+      box-shadow:0 6px 8px rgba(0,0,0,0.15);
+    }
+
+    .input-group {
+      margin-bottom:20px;
+      display:none;
+    }
+    .input-group label {
+      display:block; margin-bottom:8px;
+      font-weight:600; color:var(--primary-color);
+    }
+    .input-group input {
+      width:90%;
+      padding:12px 15px;
+      font-size:1rem;
+      border-radius:8px;
+      border:2px solid var(--border-color);
+      background-color:var(--dark-bg);
+      color:var(--light-text);
+      transition:border-color 0.3s ease;
+    }
+    .input-group input:focus {
+      outline:none; border-color:var(--primary-color);
+    }
+    .preview {
+      margin-top:5px; font-size:0.9rem; color:#aaa; font-style:italic;
+    }
+
+    .button-group {
+      display:none;
+      gap:15px;
+      margin-top:20px;
+    }
+    .button-group button {
+      flex:1;
+      width:100%;
+      padding:14px;
+      font-size:1.1rem;
+      font-weight:600;
+      background-color:var(--primary-color);
+      color:white;
+      border:none;
+      border-radius:8px;
+      cursor:pointer;
+      transition:all 0.3s ease;
+      box-shadow:0 4px 6px rgba(0,0,0,0.1);
+    }
+    .button-group button:hover {
+      background-color:var(--button-hover);
+      transform:translateY(-2px);
+      box-shadow:0 6px 8px rgba(0,0,0,0.15);
+    }
+    .redirect-btn {
+      background-color:var(--accent-color) !important;
+    }
+    .redirect-btn:hover {
+      background-color:var(--button-accent) !important;
+    }
+
+    table {
+      display:none;
+      width:100%;
+      margin-top:30px;
+      border-collapse:collapse;
+      border-radius:8px;
+      overflow:hidden;
+    }
+    th, td {
+      padding:12px 15px;
+      text-align:left;
+      border-bottom:1px solid var(--border-color);
+    }
+    th {
+      background-color:var(--primary-color);
+      color:white;
+      font-weight:600;
+    }
+    tr:hover {
+      background-color:rgba(255,51,102,0.1);
+    }
+    .monthly-savings {
+      font-weight:bold; color:var(--secondary-color);
+    }
+    .action-btn {
+      padding:5px 10px; margin:0 5px;
+      border-radius:4px; font-size:0.9rem; cursor:pointer;
+    }
+    .edit-btn {
+      background-color:var(--accent-color); color:white; border:none;
+    }
+    .edit-btn:hover {
+      background-color:var(--button-accent);
+    }
+    .delete-btn {
+      background-color:#ff3333; color:white; border:none;
+    }
+    .delete-btn:hover {
+      background-color:#cc0000;
+    }
+    .editable {
+      background-color:rgba(255,255,255,0.1);
+      border:1px dashed #666;
+      padding:5px;
+      border-radius:4px;
+    }
+
+    @media (max-width:768px) {
+      .navbar { flex-direction:column; text-align:center; padding:15px 20px; }
+      .navbar-links { margin-top:15px; flex-wrap:wrap; justify-content:center; }
+      .container { margin:30px auto; padding:20px; }
+      table { display:block; overflow-x:auto; }
+      .hero-text h1 { font-size:2rem; }
+      .hero-text p { font-size:1rem; }
+    }
+  </style>
+</head>
+<body>
+
+  <!-- Navigation Bar -->
+  <div class="navbar" id="navbar">
+    <div>
+      <img src="logo.png" alt="Logo">
+    </div>
+    <div class="navbar-links">
+      <div class="plus-button">
+        +
+        <div class="dropdown-menu">
+          <a href="wish.html">My Wish</a>
+          <a href="aspiration.html">My Aspiration</a>
+        </div>
+      </div>
+      <a href="dashboard.html">Home</a>
+      <a href="BudgetTrack.html">Track</a>
+      <a href="Recharge.html">Recharge</a>
+      <a href="about.html">About Us</a>
+      <div class="profile-dropdown">
+        <div class="profile-pic-container">
+          <img id="profilePicture" class="profile-pic" src="pfp.png" alt="Profile">
+        </div>
+        <div class="profile-menu">
+          <a href="pf.html">Profile</a>
+          <a href="login.html">Logout</a>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <div class="container">
+    <div class="hero-text">
+      <h1>My Wish</h1>
+      <p>"My Wish" is your personal wishlist wizard! Just tell us what you're after and when you'd love to have it, 
+and we'll do the math - showing you exactly how much to <span style="color:#ff3366;">save each month</span>.</p>
+      <button class="plan-btn" onclick="showForm()">Add New Wish</button>
+    </div>
+
+    <div id="aspirationForm">
+      <div class="input-group"><label for="aspiration">Wish Item</label><input type="text" id="aspiration" placeholder="e.g., Smartphone, Gaming Console"></div>
+      <div class="input-group"><label for="totalCost">Estimated Total Cost (₹)</label><input type="number" id="totalCost" placeholder="Enter amount"><div id="costPreview" class="preview"></div></div>
+      <div class="input-group"><label for="timeline">Timeline (Months)</label><input type="number" id="timeline" placeholder="Months"></div>
+      <div class="button-group">
+        <button onclick="addAspiration()">Add Wish</button>
+        <button class="redirect-btn" onclick="window.location.href='WExplore.html'">Explore Wish Ideas</button>
+      </div>
+    </div>
+
+    <table id="aspirationTable">
+      <thead>
+        <tr>
+          <th>Wish Item</th>
+          <th>Total Cost (₹)</th>
+          <th>Timeline (Months)</th>
+          <th>Monthly Savings (₹)</th>
+          <th>Actions</th>
+        </tr>
+      </thead>
+      <tbody></tbody>
+    </table>
+  </div>
+
+  <script>
+    document.addEventListener('DOMContentLoaded', function() {
+      // Load profile picture from localStorage
+      const profilePic = document.getElementById('profilePicture');
+      
+      // Check if profileData exists in localStorage and has a profilePicture
+      try {
+        const profileData = JSON.parse(localStorage.getItem('profileData'));
+        if (profileData && profileData.profilePicture) {
+          profilePic.src = profileData.profilePicture;
+        }
+      } catch (e) {
+        console.error('Error parsing profile data from localStorage:', e);
+      }
+
+      // Plus button functionality
+      const plusButton = document.querySelector('.plus-button');
+      plusButton.addEventListener('click', function(e) {
+        e.stopPropagation();
+        this.classList.toggle('active');
+      });
+      
+      // Profile dropdown functionality
+      const profileDropdown = document.querySelector('.profile-dropdown');
+      profileDropdown.addEventListener('click', function(e) {
+        e.stopPropagation();
+        this.classList.toggle('active');
+      });
+      
+      // Close dropdowns when clicking outside
+      document.addEventListener('click', function() {
+        plusButton.classList.remove('active');
+        profileDropdown.classList.remove('active');
+      });
+
+      // Navbar shrink on scroll
+      window.addEventListener('scroll', function() {
+        document.getElementById('navbar')
+          .classList.toggle('shrink', window.scrollY > 50);
+      });
+      
+      // Check for selected wish from explore page on page load
+      const selectedWish = JSON.parse(localStorage.getItem('selectedWish'));
+      if (selectedWish) {
+        // Auto-fill the form with the selected wish details
+        document.getElementById('aspiration').value = selectedWish.name;
+        document.getElementById('totalCost').value = selectedWish.price;
+        document.getElementById('costPreview').textContent = `Entered: ${formatINR(selectedWish.price)}`;
+        
+        // Show the form
+        showForm();
+        
+        // Focus on the timeline field for user to complete
+        document.getElementById('timeline').focus();
+        
+        // Clear the stored data
+        localStorage.removeItem('selectedWish');
+      }
+      
+      // Populate existing aspirations
+      let aspirations = JSON.parse(localStorage.getItem('wishes'))||[];
+      aspirations.forEach(a => insertRow(a));
+    });
+
+    // Navbar shrink
+    window.addEventListener('scroll', () => {
+      document.getElementById('navbar')
+        .classList.toggle('shrink', window.scrollY > 50);
+    });
+
+    // Show form & table
+    function showForm() {
+      document.querySelectorAll('.input-group').forEach(el => el.style.display = 'block');
+      document.querySelector('.button-group').style.display = 'flex';
+      document.querySelector('.plan-btn').style.display = 'none';
+      document.getElementById('aspirationTable').style.display = 'table';
+    }
+
+    // Format INR
+    function formatINR(v) {
+      return '₹' + v.toLocaleString('en-IN', { minimumFractionDigits:2, maximumFractionDigits:2 });
+    }
+
+    // Live cost preview
+    document.getElementById('totalCost').addEventListener('input', () => {
+      const v = parseFloat(event.target.value);
+      document.getElementById('costPreview').textContent = !isNaN(v) ? `Entered: ${formatINR(v)}` : '';
+    });
+
+    let aspirations = JSON.parse(localStorage.getItem('wishes'))||[];
+    const tbody = document.querySelector('#aspirationTable tbody');
+
+    function save() {
+      localStorage.setItem('wishes', JSON.stringify(aspirations));
+    }
+
+    function insertRow({ name, price, timeline, monthlySavings }) {
+      const row = tbody.insertRow();
+      row.innerHTML = `
+        <td>${name}</td>
+        <td class="editable-cost">${formatINR(price)}</td>
+        <td class="editable-timeline">${timeline}</td>
+        <td class="monthly-savings editable-savings">${formatINR(monthlySavings)}</td>
+        <td>
+          <button class="action-btn edit-btn" onclick="editAsp(this)">Edit</button>
+          <button class="action-btn delete-btn" onclick="delAsp(this)">Delete</button>
+        </td>
+      `;
+    }
+
+function addAspiration() {
+  const nm = document.getElementById('aspiration').value.trim();
+  const c = parseFloat(document.getElementById('totalCost').value);
+  const m = parseInt(document.getElementById('timeline').value);
+  
+  if (!nm || isNaN(c) || isNaN(m) || c <= 0 || m <= 0) {
+    return alert('Please fill valid details');
+  }
+  
+  const monthly = c / m;
+  const obj = { name: nm, price: c, timeline: m, monthlySavings: monthly };
+  
+  // Get budget data from localStorage
+  let budgetData = JSON.parse(localStorage.getItem("budgetData")) || [];
+  
+  // Find the "Goal Savings" category
+  const goalSavingsIndex = budgetData.findIndex(item => item.category === "Goal Savings");
+  
+  if (goalSavingsIndex !== -1) {
+    // Initialize spent if it doesn't exist
+    if (!budgetData[goalSavingsIndex].spent) {
+      budgetData[goalSavingsIndex].spent = 0;
+    }
+    
+    // Add the monthly savings amount to spent
+    budgetData[goalSavingsIndex].spent += monthly;
+    
+    // Save updated budget data
+    localStorage.setItem("budgetData", JSON.stringify(budgetData));
+    
+    // Show success message
+    alert(`₹${monthly.toFixed(2)} will be automatically deducted from your "Goal Savings" budget each month.`);
+  } else {
+    // If "Goal Savings" category doesn't exist, warn the user
+    alert("Warning: 'Goal Savings' category not found in your budget. Please create it in your budget first.");
+  }
+  
+  // Add to aspirations and save
+  aspirations.push(obj);
+  save();
+  insertRow(obj);
+  
+  // Ensure table is visible and clear form
+  document.getElementById('aspirationTable').style.display = 'table';
+  document.getElementById('aspiration').value = '';
+  document.getElementById('totalCost').value = '';
+  document.getElementById('timeline').value = '';
+  document.getElementById('costPreview').textContent = '';
+}
+
+    function editAsp(btn) {
+      const row = btn.closest('tr');
+      const idx = row.rowIndex - 1;
+      const a = aspirations[idx];
+      document.getElementById('aspiration').value = a.name;
+      document.getElementById('totalCost').value = a.price;
+      document.getElementById('timeline').value = a.timeline;
+      document.getElementById('costPreview').textContent = `Entered: ${formatINR(a.price)}`;
+      showForm();
+      aspirations.splice(idx,1);
+      save();
+      row.remove();
+    }
+
+    function delAsp(btn) {
+  if (!confirm('Delete this wish?')) return;
+
+  const row = btn.closest('tr');
+  const idx = row.rowIndex - 1;
+
+  // Get the monthlySavings from the aspiration being deleted
+  const deletedWish = aspirations[idx];
+  const monthlySavings = deletedWish.monthlySavings;
+
+  // Update Goal Savings in budgetData
+  let budgetData = JSON.parse(localStorage.getItem('budgetData')) || [];
+  const goalIndex = budgetData.findIndex(b => b.category.toLowerCase() === "goal savings");
+  if (goalIndex !== -1 && monthlySavings) {
+    budgetData[goalIndex].spent = Math.max(
+      0,
+      (budgetData[goalIndex].spent || 0) - monthlySavings
+    );
+    localStorage.setItem('budgetData', JSON.stringify(budgetData));
+  }
+
+  // Remove from wishes array and update UI
+  aspirations.splice(idx, 1);
+  save();
+  row.remove();
+}
+
+  </script>
+
+</body>
+<!-- Footer Section -->
+<footer style="background-color: #0d0d0d; color: #f5f5f5; font-family: 'Poppins', sans-serif; padding: 50px 0 20px; border-top: 1px solid #b3003c;">
+  <div style="max-width: 1200px; margin: 0 auto; padding: 0 20px;">
+    <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(250px, 1fr)); gap: 40px; margin-bottom: 40px;">
+      
+      <!-- About Column -->
+      <div>
+        <h3 style="color: #ff3366; font-size: 1.5rem; margin-bottom: 20px; position: relative; padding-bottom: 10px;">
+          About PennyWise
+          <span style="position: absolute; bottom: 0; left: 0; width: 60px; height: 2px; background: #ff3366;"></span>
+        </h3>
+        <p style="color: #ddd; line-height: 1.6; margin-bottom: 20px;">
+          Your personal financial companion helping you track expenses, manage budgets, and achieve your financial goals.
+        </p>
+        <div style="display: flex; gap: 15px;">
+          <a href="#" style="color: #f5f5f5; font-size: 1.5rem; transition: color 0.3s ease;"><i class="fab fa-facebook"></i></a>
+          <a href="https://x.com/pennywisecorps" target="_blank" style="color: #f5f5f5; font-size: 1.5rem; transition: color 0.3s ease;">
+            <i class="fab fa-twitter"></i>
+          </a>
+          <a href="https://www.instagram.com/pennywisecorps" target="_blank" style="color: #f5f5f5; font-size: 1.5rem; transition: color 0.3s ease;">
+            <i class="fab fa-instagram"></i>
+          </a>
+          <a href="#" style="color: #f5f5f5; font-size: 1.5rem; transition: color 0.3s ease;"><i class="fab fa-linkedin"></i></a>
+        </div>
+      </div>
+
+      <!-- Quick Links Column -->
+      <div>
+        <h3 style="color: #ff3366; font-size: 1.5rem; margin-bottom: 20px; position: relative; padding-bottom: 10px;">
+          Quick Links
+          <span style="position: absolute; bottom: 0; left: 0; width: 60px; height: 2px; background: #ff3366;"></span>
+        </h3>
+        <ul style="list-style: none; padding: 0; margin: 0;">
+          <li style="margin-bottom: 10px;"><a href="dashboard.html" style="color: #ddd; text-decoration: none; transition: color 0.3s ease; display: block;">Home</a></li>
+          <li style="margin-bottom: 10px;"><a href="BudgetTrack.html" style="color: #ddd; text-decoration: none; transition: color 0.3s ease; display: block;">Track Budget</a></li>
+          <li style="margin-bottom: 10px;"><a href="Recharge.html" style="color: #ddd; text-decoration: none; transition: color 0.3s ease; display: block;">Recharge</a></li>
+          <li style="margin-bottom: 10px;"><a href="about.html" style="color: #ddd; text-decoration: none; transition: color 0.3s ease; display: block;">About Us</a></li>
+          <li style="margin-bottom: 10px;"><a href="login.html" style="color: #ddd; text-decoration: none; transition: color 0.3s ease; display: block;">Login/Signup</a></li>
+        </ul>
+      </div>
+
+      <!-- Contact Column -->
+      <div>
+        <h3 style="color: #ff3366; font-size: 1.5rem; margin-bottom: 20px; position: relative; padding-bottom: 10px;">
+          Contact Us
+          <span style="position: absolute; bottom: 0; left: 0; width: 60px; height: 2px; background: #ff3366;"></span>
+        </h3>
+        <ul style="list-style: none; padding: 0; margin: 0;">
+          <li style="margin-bottom: 15px; display: flex; align-items: flex-start;">
+            <i class="fas fa-map-marker-alt" style="color: #ff3366; margin-right: 10px; margin-top: 3px;"></i>
+            <span style="color: #ddd;">123 Financial Street, Money City, MC 12345</span>
+          </li>
+          <li style="margin-bottom: 15px; display: flex; align-items: center;">
+            <i class="fas fa-phone-alt" style="color: #ff3366; margin-right: 10px;"></i>
+            <span style="color: #ddd;">+91 0123456789</span>
+          </li>
+          <li style="margin-bottom: 15px; display: flex; align-items: center;">
+            <i class="fas fa-envelope" style="color: #ff3366; margin-right: 10px;"></i>
+            <span style="color: #ddd;">pennywisecorps@gmail.com</span>
+          </li>
+        </ul>
+      </div>
+
+      <!-- Newsletter Column -->
+      <div>
+        <h3 style="color: #ff3366; font-size: 1.5rem; margin-bottom: 20px; position: relative; padding-bottom: 10px;">
+          Newsletter
+          <span style="position: absolute; bottom: 0; left: 0; width: 60px; height: 2px; background: #ff3366;"></span>
+        </h3>
+        <p style="color: #ddd; line-height: 1.6; margin-bottom: 20px;">
+          Subscribe to our newsletter for financial tips and updates.
+        </p>
+        <form style="display: flex; flex-wrap: wrap; gap: 10px; margin-top: 10px;">
+          <input type="email" placeholder="Your email" 
+                 style="flex: 1; min-width: 200px; padding: 12px 15px; border: none; border-radius: 5px; font-family: 'Poppins', sans-serif;">
+          <button type="submit" 
+                  style="background-color: #ff3366; color: white; border: none; padding: 12px 20px; border-radius: 5px; cursor: pointer; transition: background-color 0.3s ease;">
+            <i class="fas fa-paper-plane"></i>
+          </button>
+        </form>
+      </div>
+    </div>
+
+    <!-- Copyright -->
+    <div style="border-top: 1px solid #333; padding-top: 30px; text-align: center;">
+      <p style="color: #aaa; margin: 0 0 10px;">
+        &copy; 2025 PennyWise. All Rights Reserved.
+      </p>
+      <div style="display: flex; justify-content: center; flex-wrap: wrap; gap: 20px;">
+        <a href="#" style="color: #aaa; text-decoration: none; transition: color 0.3s ease;">Privacy Policy</a>
+        <a href="#" style="color: #aaa; text-decoration: none; transition: color 0.3s ease;">Terms of Service</a>
+        <a href="#" style="color: #aaa; text-decoration: none; transition: color 0.3s ease;">Sitemap</a>
+      </div>
+    </div>
+
+  </div>
+</footer>
+
+</html>

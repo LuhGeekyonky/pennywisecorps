@@ -1,0 +1,913 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Recharge & Bills | PennyWise</title>
+  <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;600&display=swap" rel="stylesheet">
+  <style>
+    :root {
+      --primary-color: #ff3366;
+      --secondary-color: #4CAF50;
+      --accent-color: #2196F3;
+      --dark-bg: #111;
+      --darker-bg: #000;
+      --light-text: #fff;
+      --border-color: #333;
+      --button-hover: #e02d5a;
+      --button-secondary: #3e8e41;
+      --button-accent: #0b7dda;
+      --electricity: #FFA500;
+      --mobile: #9C27B0;
+      --rent: #FF5722;
+      --water: #00BCD4;
+      --network: #4CAF50;
+      --media: #E91E63;
+      --custom: #607D8B;
+    }
+    * { box-sizing: border-box; }
+    body {
+      margin: 0;
+      background-color: var(--dark-bg);
+      color: var(--light-text);
+      font-family: 'Poppins', sans-serif;
+      min-height: 100vh;
+    }
+
+    /* NAVIGATION BAR */
+    .navbar {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      background-color: #0d0d0d;
+      padding: 20px;
+      position: sticky;
+      top: 0;
+      z-index: 1000;
+      transition: all 0.5s ease;
+      border-bottom: 1px solid #b3003c;
+    }
+    .navbar-links {
+      display: flex;
+      gap: 15px;
+      align-items: center;
+    }
+    .navbar a {
+      color: #f5f5f5;
+      text-decoration: none;
+      font-size: 18px;
+      font-family: 'Poppins', sans-serif;
+      transition: color 0.3s ease;
+    }
+    .navbar a:hover {
+      color: #ff3366;
+    }
+    .navbar img {
+      height: 120px;
+      transition: height 0.5s ease;
+    }
+    .shrink {
+      padding: 10px;
+    }
+    .shrink img {
+      height: 90px;
+    }
+
+    /* PLUS BUTTON STYLES */
+    .plus-button {
+      background-color: #FFD700;
+      color: #0d0d0d;
+      width: 36px;
+      height: 36px;
+      border-radius: 8px;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      font-size: 22px;
+      font-weight: bold;
+      cursor: pointer;
+      transition: all 0.3s ease;
+      position: relative;
+      margin-right: 5px;
+    }
+    .plus-button:hover {
+      background-color: #ffeb3b;
+      transform: scale(1.1);
+    }
+
+    /* PROFILE PICTURE DROPDOWN - UPDATED FOR CIRCULAR CROP */
+    .profile-dropdown {
+      position: relative;
+      margin-left: 10px;
+    }
+    .profile-pic-container {
+      width: 44px; /* Slightly larger to account for border */
+      height: 44px;
+      border-radius: 50%;
+      overflow: hidden;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      border: 2px solid #ff3366;
+      transition: all 0.3s ease;
+      background-color: #333;
+    }
+    .profile-pic {
+      width: 100%;
+      height: 100%;
+      object-fit: cover;
+      cursor: pointer;
+      transition: all 0.3s ease;
+    }
+    .profile-pic-container:hover {
+      transform: scale(1.1);
+      border-color: #ffeb3b;
+    }
+    .profile-menu {
+      position: absolute;
+      top: 100%;
+      right: 0;
+      background-color: #1a1a1a;
+      border-radius: 8px;
+      padding: 10px 0;
+      min-width: 150px;
+      box-shadow: 0 8px 16px rgba(0,0,0,0.3);
+      opacity: 0;
+      visibility: hidden;
+      transition: all 0.3s ease;
+      z-index: 1001;
+    }
+    .profile-dropdown.active .profile-menu {
+      opacity: 1;
+      visibility: visible;
+      transform: translateY(10px);
+    }
+    .profile-menu a {
+      display: block;
+      padding: 10px 20px;
+      color: #f5f5f5;
+      font-family: 'Poppins', sans-serif;
+      font-size: 16px;
+      transition: all 0.2s ease;
+    }
+    .profile-menu a:hover {
+      background-color: #ff3366;
+      color: white;
+      padding-left: 25px;
+    }
+
+    /* DROPDOWN MENU */
+    .dropdown-menu {
+      position: absolute;
+      top: 100%;
+      left: 0;
+      background-color: #1a1a1a;
+      border-radius: 8px;
+      padding: 10px 0;
+      min-width: 180px;
+      box-shadow: 0 8px 16px rgba(0,0,0,0.3);
+      opacity: 0;
+      visibility: hidden;
+      transition: all 0.3s ease;
+      z-index: 1001;
+    }
+    .plus-button.active .dropdown-menu {
+      opacity: 1;
+      visibility: visible;
+      transform: translateY(10px);
+    }
+    .dropdown-menu a {
+      display: block;
+      padding: 10px 20px;
+      color: #f5f5f5;
+      font-family: 'Poppins', sans-serif;
+      font-size: 16px;
+      transition: all 0.2s ease;
+    }
+    .dropdown-menu a:hover {
+      background-color: #ff3366;
+      color: white;
+      padding-left: 25px;
+    }
+
+    .container {
+      max-width:1200px; margin:2rem auto; padding:0 1.5rem;
+    }
+    h1 {
+      font-size:clamp(2rem,5vw,3rem);
+      color:var(--primary-color);
+      text-align:center;
+      margin-bottom:0.5rem;
+    }
+    .tagline {
+      font-size:clamp(0.9rem,2vw,1.2rem);
+      font-weight:600; color:var(--light-text);
+      font-style:italic; text-align:center;
+      margin-bottom:2rem;
+    }
+
+    .controls {
+      display:flex; justify-content:space-between;
+      flex-wrap:wrap; gap:1rem;
+      margin-bottom:1.5rem;
+    }
+    .sort-options {
+      display:flex; gap:0.75rem; flex-wrap:wrap;
+    }
+    .location-selector {
+      display:flex; align-items:center; gap:0.5rem;
+    }
+    .location-selector select {
+      padding:0.5rem 0.75rem;
+      background:var(--darker-bg);
+      border:1px solid var(--primary-color);
+      color: var(--light-text);
+      border-radius:0.25rem;
+      font-size:0.9rem;
+    }
+
+    .btn {
+      padding:0.5rem 1rem;
+      background:var(--darker-bg);
+      border:1px solid var(--primary-color);
+      color:var(--light-text);
+      border-radius:0.25rem;
+      cursor:pointer;
+      transition:all 0.3s ease;
+      font-size:0.9rem;
+    }
+    .btn:hover { background:var(--primary-color); }
+    .btn.active { background:var(--primary-color); font-weight:600; }
+    .btn-primary { background:var(--primary-color); }
+    .btn-primary:hover { background:var(--button-hover); }
+
+    .services-grid {
+      display:grid;
+      grid-template-columns:repeat(auto-fill,minmax(20rem,1fr));
+      gap:1.5rem;
+      margin-top:1.5rem;
+    }
+    .service-card {
+      background:#222; border-radius:0.5rem;
+      padding:1.5rem; transition:all 0.3s ease;
+      border-left:0.25rem solid; position:relative;
+      overflow:hidden;
+    }
+    .service-card:hover {
+      transform:translateY(-0.25rem);
+      box-shadow:0 0.5rem 1rem rgba(0,0,0,0.2);
+    }
+    .service-card.electricity { border-left-color:var(--electricity); }
+    .service-card.mobile      { border-left-color:var(--mobile); }
+    .service-card.rent        { border-left-color:var(--rent); }
+    .service-card.water       { border-left-color:var(--water); }
+    .service-card.network     { border-left-color:var(--network); }
+    .service-card.media       { border-left-color:var(--media); }
+    .service-card.custom      { border-left-color:var(--custom); }
+
+    .service-icon      { font-size:2rem; margin-bottom:1rem; }
+    .service-title     { font-size:1.25rem; font-weight:600; margin-bottom:0.5rem; }
+    .service-price     { font-size:1.1rem; font-weight:bold; margin-bottom:0.5rem; }
+    .service-due       { color:#ccc; font-size:0.9rem; margin-bottom:0.5rem; }
+    .service-payment-link { color:#aaa; font-size:0.8rem; margin-bottom:1rem; word-break:break-all; }
+    .service-notes     { color:#ccc; font-size:0.85rem; margin-bottom:1rem; }
+
+    .service-actions { display:flex; gap:0.5rem; }
+    .service-btn {
+      flex:1; padding:0.5rem 1rem;
+      background:var(--primary-color);
+      color:#fff; text-decoration:none;
+      border-radius:0.25rem;
+      font-weight:600;
+      text-align:center;
+      transition:all 0.3s ease;
+      font-size:0.9rem;
+    }
+    .service-btn:hover            { background:var(--button-hover); transform:translateY(-0.1rem); }
+    .service-btn.edit-btn         { background:var(--accent-color); }
+    .service-btn.edit-btn:hover   { background:var(--button-accent); }
+    .service-btn.delete-btn       { background:#f44336; }
+    .service-btn.delete-btn:hover { background:#d32f2f; }
+
+    .modal {
+      display:none; position:fixed;
+      top:0; left:0;
+      width:100%; height:100%;
+      background:rgba(0,0,0,0.7);
+      z-index:1001;
+      justify-content:center;
+      align-items:center;
+    }
+    .modal-content {
+      background:var(--darker-bg);
+      border-radius:0.5rem;
+      width:90%; max-width:30rem;
+      max-height:90vh;
+      border:1px solid var(--primary-color);
+      display:flex; flex-direction:column;
+      overflow:hidden;
+    }
+    .modal-header {
+      display:flex; justify-content:space-between; align-items:center;
+      padding:1rem 1.5rem;
+      border-bottom:1px solid var(--border-color);
+    }
+    .modal-title { font-size:1.25rem; color:var(--primary-color); margin:0; }
+    .close-btn {
+      font-size:1.5rem; cursor:pointer; background:none; border:none; color:var(--light-text);
+    }
+    .modal-body { padding:1.5rem; overflow-y:auto; }
+    .form-group { margin-bottom:1rem; }
+    .form-group label {
+      display:block; margin-bottom:0.5rem; font-weight:600; font-size:0.9rem;
+    }
+    .form-group input,
+    .form-group select,
+    .form-group textarea {
+      width:100%; padding:0.5rem 0.75rem;
+      background:var(--dark-bg);
+      border:1px solid var(--border-color);
+      color:var(--light-text);
+      border-radius:0.25rem;
+      font-size:0.9rem;
+    }
+    .form-group textarea { min-height:5rem; }
+    .emoji-picker-container { position:relative; }
+    .emoji-select {
+      width:100%; padding:0.5rem 0.75rem;
+      background:var(--dark-bg);
+      border:1px solid var(--border-color);
+      color:var(--light-text);
+      border-radius:0.25rem;
+      font-size:1.2rem;
+      cursor:pointer;
+    }
+    .emoji-dropdown {
+      position:absolute; top:100%; left:0;
+      width:100%; max-height:15rem; overflow-y:auto;
+      background:var(--dark-bg); border:1px solid var(--border-color);
+      border-radius:0.25rem; display:grid;
+      grid-template-columns:repeat(6,1fr); gap:0.5rem; padding:0.5rem; z-index:10;
+      display:none;
+    }
+    .emoji-dropdown.show { display:grid; }
+    .emoji-option {
+      font-size:1.5rem; cursor:pointer; padding:0.25rem; text-align:center;
+      border-radius:0.25rem; transition:background 0.2s;
+    }
+    .emoji-option:hover { background:var(--primary-color); }
+    .modal-footer {
+      padding:1rem 1.5rem;
+      border-top:1px solid var(--border-color);
+      display:flex; justify-content:flex-end; gap:0.5rem;
+    }
+
+    @media (max-width:768px) {
+      .navbar { padding:0.75rem 1rem; flex-direction:column; text-align:center; }
+      .navbar-links { margin-top:0.75rem; flex-wrap:wrap; justify-content:center; }
+      .navbar a { margin:0.25rem 0.5rem; font-size:0.9rem; }
+      .container { margin:1rem auto; padding:0 1rem; }
+      .services-grid { grid-template-columns:1fr; }
+      .controls { flex-direction:column; }
+      .sort-options,
+      .location-selector { justify-content:center; }
+      .modal-content { width:95%; }
+      .emoji-dropdown { grid-template-columns:repeat(5,1fr); }
+    }
+    @media (max-width:480px) {
+      .emoji-dropdown { grid-template-columns:repeat(4,1fr); }
+    }
+  </style>
+</head>
+<body>
+  <!-- Navigation Bar -->
+  <div class="navbar" id="navbar">
+    <div>
+      <img src="logo.png" alt="Logo">
+    </div>
+    <div class="navbar-links">
+      <div class="plus-button">
+        +
+        <div class="dropdown-menu">
+          <a href="wish.html">My Wish</a>
+          <a href="aspiration.html">My Aspiration</a>
+        </div>
+      </div>
+      <a href="dashboard.html">Home</a>
+      <a href="BudgetTrack.html">Track</a>
+      <a href="Recharge.html">Recharge</a>
+      <a href="about.html">About Us</a>
+      <div class="profile-dropdown">
+        <div class="profile-pic-container">
+          <img id="profilePicture" class="profile-pic" src="pfp.png" alt="Profile">
+        </div>
+        <div class="profile-menu">
+          <a href="pf.html">Profile</a>
+          <a href="login.html">Logout</a>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <div class="container">
+    <h1>Recharge & Bills</h1>
+    <div class="tagline">Pay all your bills in one place</div>
+
+    <div class="controls">
+      <div class="sort-options">
+        <button class="btn" id="sort-price-asc">Price (Low to High)</button>
+        <button class="btn" id="sort-price-desc">Price (High to Low)</button>
+        <button class="btn" id="sort-due-asc">Due Date (Soonest)</button>
+        <button class="btn" id="sort-due-desc">Due Date (Latest)</button>
+      </div>
+      <div class="location-selector">
+        <span>Location:</span>
+        <select id="location-select">
+          <option value="delhi">Delhi</option>
+          <option value="mumbai">Mumbai</option>
+          <option value="bangalore">Bangalore</option>
+          <option value="hyderabad">Hyderabad</option>
+          <option value="chennai">Chennai</option>
+          <option value="kolkata">Kolkata</option>
+        </select>
+      </div>
+    </div>
+
+    <button class="btn btn-primary" id="add-bill-btn">+ Add Custom Bill</button>
+
+    <div class="services-grid" id="services-grid">
+      <!-- Bills will be loaded here -->
+    </div>
+  </div>
+
+  <!-- Add/Edit Bill Modal -->
+  <div class="modal" id="bill-modal">
+    <div class="modal-content">
+      <div class="modal-header">
+        <h3 class="modal-title" id="modal-title">Add New Bill</h3>
+        <button class="close-btn" id="close-modal">&times;</button>
+      </div>
+      <div class="modal-body">
+        <form id="bill-form">
+          <input type="hidden" id="bill-id">
+          <div class="form-group">
+            <label for="bill-type">Bill Type</label>
+            <select id="bill-type" required>
+              <option value="">Select type</option>
+              <option value="electricity">Electricity</option>
+              <option value="mobile">Mobile Recharge</option>
+              <option value="rent">Rent</option>
+              <option value="water">Water</option>
+              <option value="network">Network</option>
+              <option value="media">Media Services</option>
+              <option value="custom">Custom</option>
+            </select>
+          </div>
+          <div class="form-group">
+            <label for="bill-name">Bill Name</label>
+            <input type="text" id="bill-name" required>
+          </div>
+          <div class="form-group">
+            <label for="bill-amount">Amount (₹)</label>
+            <input type="number" id="bill-amount" required>
+          </div>
+          <div class="form-group">
+            <label for="bill-due">Due Date</label>
+            <input type="date" id="bill-due" required>
+          </div>
+          <div class="form-group">
+            <label for="bill-payment-link">Payment Link</label>
+            <input type="url" id="bill-payment-link" placeholder="https://">
+          </div>
+          <div class="form-group emoji-picker-container">
+            <label for="emoji-select">Icon</label>
+            <select id="emoji-select" class="emoji-select">
+              <option value="💰">💰 Money</option>
+              <option value="⚡">⚡ Electricity</option>
+              <option value="📱">📱 Mobile</option>
+              <option value="🏠">🏠 Rent</option>
+              <option value="💧">💧 Water</option>
+              <option value="📶">📶 Internet</option>
+              <option value="🎬">🎬 Media</option>
+              <option value="💳">💳 Card</option>
+              <option value="🛒">🛒 Shopping</option>
+              <option value="🍎">🍎 Food</option>
+              <option value="🚗">🚗 Car</option>
+              <option value="✈️">✈️ Travel</option>
+            </select>
+            <div class="emoji-dropdown" id="emoji-dropdown">
+              <div class="emoji-option" data-emoji="⚡">⚡</div>
+              <div class="emoji-option" data-emoji="📱">📱</div>
+              <div class="emoji-option" data-emoji="🏠">🏠</div>
+              <div class="emoji-option" data-emoji="💧">💧</div>
+              <div class="emoji-option" data-emoji="📶">📶</div>
+              <div class="emoji-option" data-emoji="🎬">🎬</div>
+              <div class="emoji-option" data-emoji="💰">💰</div>
+              <div class="emoji-option" data-emoji="💳">💳</div>
+              <div class="emoji-option" data-emoji="🛒">🛒</div>
+              <div class="emoji-option" data-emoji="🍎">🍎</div>
+              <div class="emoji-option" data-emoji="🚗">🚗</div>
+              <div class="emoji-option" data-emoji="✈️">✈️</div>
+            </div>
+            <input type="hidden" id="bill-icon" value="💰">
+          </div>
+          <div class="form-group">
+            <label for="bill-notes">Notes</label>
+            <textarea id="bill-notes" rows="3"></textarea>
+          </div>
+        </form>
+      </div>
+      <div class="modal-footer">
+        <button type="button" class="btn" id="cancel-bill">Cancel</button>
+        <button type="submit" form="bill-form" class="btn btn-primary" id="save-bill">Add Bill</button>
+      </div>
+    </div>
+  </div>
+
+  <script>
+    document.addEventListener('DOMContentLoaded', () => {
+      // Navbar shrink
+      window.addEventListener('scroll', () => {
+        const nav = document.getElementById('navbar');
+        window.scrollY > 50 ? nav.classList.add('shrink') : nav.classList.remove('shrink');
+      });
+
+      // Load profile picture from localStorage
+      const profilePic = document.getElementById('profilePicture');
+      
+      // Check if profileData exists in localStorage and has a profilePicture
+      try {
+        const profileData = JSON.parse(localStorage.getItem('profileData'));
+        if (profileData && profileData.profilePicture) {
+          profilePic.src = profileData.profilePicture;
+        }
+      } catch (e) {
+        console.error('Error parsing profile data from localStorage:', e);
+      }
+
+      // Plus‐button
+      const plusButton = document.querySelector('.plus-button');
+      plusButton.addEventListener('click', e => { 
+        e.stopPropagation(); 
+        plusButton.classList.toggle('active'); 
+      });
+      
+      // Profile dropdown functionality
+      const profileDropdown = document.querySelector('.profile-dropdown');
+      profileDropdown.addEventListener('click', e => {
+        e.stopPropagation();
+        profileDropdown.classList.toggle('active');
+      });
+      
+      // Close dropdowns when clicking outside
+      document.addEventListener('click', () => {
+        plusButton.classList.remove('active');
+        profileDropdown.classList.remove('active');
+      });
+
+      const servicesGrid   = document.getElementById('services-grid');
+      const sortPriceAsc   = document.getElementById('sort-price-asc');
+      const sortPriceDesc  = document.getElementById('sort-price-desc');
+      const sortDueAsc     = document.getElementById('sort-due-asc');
+      const sortDueDesc    = document.getElementById('sort-due-desc');
+      const locationSelect = document.getElementById('location-select');
+      const addBillBtn     = document.getElementById('add-bill-btn');
+      const billModal      = document.getElementById('bill-modal');
+      const closeModal     = document.getElementById('close-modal');
+      const cancelBill     = document.getElementById('cancel-bill');
+      const billForm       = document.getElementById('bill-form');
+      const modalTitle     = document.getElementById('modal-title');
+      const saveBillBtn    = document.getElementById('save-bill');
+      const emojiSelect    = document.getElementById('emoji-select');
+      const emojiDropdown  = document.getElementById('emoji-dropdown');
+      const billIconInput  = document.getElementById('bill-icon');
+
+      // Emoji picker
+      emojiSelect.addEventListener('click', e => { e.preventDefault(); emojiDropdown.classList.toggle('show'); });
+      document.addEventListener('click', e => {
+        if (!emojiSelect.contains(e.target) && !emojiDropdown.contains(e.target)) {
+          emojiDropdown.classList.remove('show');
+        }
+      });
+      document.querySelectorAll('.emoji-option').forEach(opt => {
+        opt.addEventListener('click', e => {
+          const emo = e.target.dataset.emoji;
+          billIconInput.value = emo;
+          emojiSelect.value   = emo;
+          emojiDropdown.classList.remove('show');
+        });
+      });
+
+      // Payment gateways, city‐specific water + electricity:
+      const paymentGateways = {
+        electricity: {
+          delhi:     { url:'https://www.delhisldc.org' },
+          mumbai:    { url:'https://www.mahadiscom.in' },
+          bangalore: { url:'https://bescom.org' },
+          hyderabad: { url:'https://www.tssouthernpower.com' },
+          chennai:   { url:'https://www.tangedco.gov.in' },
+          kolkata:   { url:'https://www.wbsedcl.in' }
+        },
+        mobile:     { default:{ url:'https://www.jio.com' } },
+        rent:       { default:{ url:'https://www.nobroker.in/pay-rent' } },
+        water: {
+          delhi:     { url:'https://www.delhi.gov.in' },
+          mumbai:    { url:'https://www.mcgm.gov.in' },
+          bangalore: { url:'https://www.bwssb.gov.in' },
+          hyderabad: { url:'https://www.hyderabadwater.gov.in' },
+          chennai:   { url:'https://www.chennaimetrowater.tn.gov.in' },
+          kolkata:   { url:'https://www.kmcgov.in' }
+        },
+        network:    { default:{ url:'https://www.actcorp.in' } },
+        media:      { default:{ url:'' } },  
+        custom:     { default:{ url:'' } }
+      };
+
+      let bills = [], currentLocation = 'delhi', editingBillId = null;
+
+      // Sample bills
+      const sampleBills = [
+        { id:'1', type:'electricity', name:'Electricity Bill', amount:1200, due:'2023-12-05', notes:'Last month', icon:'⚡', paymentLink:'' },
+        { id:'2', type:'mobile',      name:'Mobile Recharge',   amount:599,  due:'2023-12-15', notes:'Monthly plan', icon:'📱', paymentLink:'' },
+        { id:'3', type:'rent',        name:'House Rent',        amount:25000,due:'2023-12-01', notes:'Monthly rent', icon:'🏠', paymentLink:'' },
+        { id:'4', type:'water',       name:'Water Bill',        amount:450,  due:'2023-12-10', notes:'Quarterly',     icon:'💧', paymentLink:'' },
+        { id:'5', type:'network',     name:'Internet Bill',     amount:999,  due:'2023-12-20', notes:'Monthly sub',  icon:'📶', paymentLink:'' },
+        { id:'6', type:'media',       name:'OTT Subscription',  amount:299,  due:'2023-12-25', notes:'Annual plan',  icon:'🎬', paymentLink:'' }
+      ];
+
+      function loadBills() {
+        const saved = localStorage.getItem('bills');
+        bills = saved ? JSON.parse(saved) : sampleBills.slice();
+        saveBills();
+        renderBills();
+      }
+      function saveBills() {
+        localStorage.setItem('bills', JSON.stringify(bills));
+      }
+      function renderBills() {
+        servicesGrid.innerHTML = '';
+        bills.forEach(b => servicesGrid.appendChild(createBillCard(b)));
+      }
+
+      function createBillCard(bill) {
+        const card = document.createElement('div');
+        card.className = `service-card ${bill.type}`;
+        card.dataset.price = bill.amount;
+        card.dataset.due   = bill.due;
+        card.dataset.id    = bill.id;
+
+        const dueDate = new Date(bill.due);
+        const fd = dueDate.toLocaleDateString('en-IN', { day:'numeric', month:'short', year:'numeric' });
+        const gw = getPaymentInfo(bill);
+
+        // If media type, button = Check Options → Trial5.html
+        let actionBtn;
+        if (bill.type === 'media') {
+          actionBtn = `<a href="ott.html" class="service-btn">Check Options</a>`;
+        } else {
+          actionBtn = `<a href="${gw.url||'#'}" target="_blank" class="service-btn pay-btn">Pay Now</a>`;
+        }
+
+        card.innerHTML = `
+          <div class="service-icon">${bill.icon || '💰'}</div>
+          <h3 class="service-title">${bill.name}</h3>
+          <div class="service-price">₹${bill.amount.toLocaleString('en-IN')}</div>
+          <div class="service-due">Due: ${fd}</div>
+          ${gw.url && bill.type !== 'media'?`<div class="service-payment-link">Pay at: ${gw.url}</div>`:''}
+          ${bill.notes?`<div class="service-notes">${bill.notes}</div>`:''}
+          <div class="service-actions">
+            ${actionBtn}
+            <button class="service-btn edit-btn">Edit</button>
+            <button class="service-btn delete-btn">Delete</button>
+          </div>
+        `;
+        if (bill.type !== 'media') {
+          card.querySelector('.pay-btn')?.addEventListener('click', e => {
+            if (!gw.url) { e.preventDefault(); alert('No payment link available'); }
+          });
+        }
+        card.querySelector('.edit-btn').addEventListener('click', () => editBill(bill.id));
+        card.querySelector('.delete-btn').addEventListener('click', () => deleteBill(bill.id));
+        return card;
+      }
+
+      function getPaymentInfo(bill) {
+        const type = bill.type;
+        const local = paymentGateways[type]?.[currentLocation];
+        if (local) return local;
+        return paymentGateways[type]?.default || { url:'' };
+      }
+
+      function editBill(id) {
+        const bill = bills.find(b => b.id===id);
+        if (!bill) return;
+        editingBillId = id;
+        modalTitle.textContent = 'Edit Bill';
+        document.getElementById('bill-id').value           = bill.id;
+        document.getElementById('bill-type').value         = bill.type;
+        document.getElementById('bill-name').value         = bill.name;
+        document.getElementById('bill-amount').value       = bill.amount;
+        document.getElementById('bill-due').value          = bill.due;
+        document.getElementById('bill-payment-link').value = bill.paymentLink;
+        document.getElementById('bill-notes').value        = bill.notes;
+        billIconInput.value = bill.icon;
+        emojiSelect.value   = bill.icon;
+        saveBillBtn.textContent = 'Update Bill';
+        billModal.style.display = 'flex';
+      }
+
+      function deleteBill(id) {
+        if (confirm('Delete this bill?')) {
+          bills = bills.filter(b=>b.id!==id);
+          saveBills();
+          renderBills();
+        }
+      }
+
+      function addBill() {
+        editingBillId = null;
+        modalTitle.textContent = 'Add New Bill';
+        billForm.reset();
+        billIconInput.value = '💰';
+        emojiSelect.value   = '💰';
+        saveBillBtn.textContent = 'Add Bill';
+        billModal.style.display = 'flex';
+      }
+
+      function saveBill(data) {
+        const nb = {
+          id:          data.id || Date.now().toString(),
+          type:        data.type,
+          name:        data.name,
+          amount:      parseFloat(data.amount),
+          due:         data.due,
+          notes:       data.notes,
+          icon:        data.icon,
+          paymentLink: data.paymentLink
+        };
+        if (editingBillId) {
+          const idx = bills.findIndex(b=>b.id===editingBillId);
+          if (idx!==-1) bills[idx]=nb;
+        } else bills.push(nb);
+        saveBills();
+        renderBills();
+        billModal.style.display='none';
+      }
+
+      function sortByPrice(desc) {
+        bills.sort((a,b)=>desc?b.amount-a.amount:a.amount-b.amount);
+        renderBills();
+      }
+      function sortByDue(asc) {
+        bills.sort((a,b)=>asc?new Date(a.due)-new Date(b.due):new Date(b.due)-new Date(a.due));
+        renderBills();
+      }
+      function resetSortButtons() {
+        [sortPriceAsc,sortPriceDesc,sortDueAsc,sortDueDesc].forEach(btn=>btn.classList.remove('active'));
+      }
+
+      sortPriceAsc.addEventListener('click',()=>{
+        resetSortButtons(); sortPriceAsc.classList.add('active'); sortByPrice(false);
+      });
+      sortPriceDesc.addEventListener('click',()=>{
+        resetSortButtons(); sortPriceDesc.classList.add('active'); sortByPrice(true);
+      });
+      sortDueAsc.addEventListener('click',()=>{
+        resetSortButtons(); sortDueAsc.classList.add('active'); sortByDue(true);
+      });
+      sortDueDesc.addEventListener('click',()=>{
+        resetSortButtons(); sortDueDesc.classList.add('active'); sortByDue(false);
+      });
+
+      locationSelect.addEventListener('change',()=>{
+        currentLocation = locationSelect.value;
+        renderBills();
+      });
+      addBillBtn.addEventListener('click', addBill);
+      closeModal.addEventListener('click',()=>billModal.style.display='none');
+      cancelBill.addEventListener('click',()=>billModal.style.display='none');
+
+      billForm.addEventListener('submit', e=>{
+        e.preventDefault();
+        const data = {
+          id:          document.getElementById('bill-id').value,
+          type:        document.getElementById('bill-type').value,
+          name:        document.getElementById('bill-name').value,
+          amount:      document.getElementById('bill-amount').value,
+          due:         document.getElementById('bill-due').value,
+          paymentLink: document.getElementById('bill-payment-link').value,
+          notes:       document.getElementById('bill-notes').value,
+          icon:        document.getElementById('bill-icon').value
+        };
+        saveBill(data);
+      });
+
+      window.addEventListener('click', e=>{
+        if (e.target===billModal) billModal.style.display='none';
+      });
+
+      loadBills();
+      sortDueAsc.classList.add('active');
+      sortByDue(true);
+    });
+  </script>
+</body>
+<!-- Footer Section -->
+<footer style="background-color: #0d0d0d; color: #f5f5f5; font-family: 'Poppins', sans-serif; padding: 50px 0 20px; border-top: 1px solid #b3003c;">
+  <div style="max-width: 1200px; margin: 0 auto; padding: 0 20px;">
+    <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(250px, 1fr)); gap: 40px; margin-bottom: 40px;">
+      
+      <!-- About Column -->
+      <div>
+        <h3 style="color: #ff3366; font-size: 1.5rem; margin-bottom: 20px; position: relative; padding-bottom: 10px;">
+          About PennyWise
+          <span style="position: absolute; bottom: 0; left: 0; width: 60px; height: 2px; background: #ff3366;"></span>
+        </h3>
+        <p style="color: #ddd; line-height: 1.6; margin-bottom: 20px;">
+          Your personal financial companion helping you track expenses, manage budgets, and achieve your financial goals.
+        </p>
+        <div style="display: flex; gap: 15px;">
+          <a href="#" style="color: #f5f5f5; font-size: 1.5rem; transition: color 0.3s ease;"><i class="fab fa-facebook"></i></a>
+          <a href="https://x.com/pennywisecorps" target="_blank" style="color: #f5f5f5; font-size: 1.5rem; transition: color 0.3s ease;">
+            <i class="fab fa-twitter"></i>
+          </a>
+          <a href="https://www.instagram.com/pennywisecorps" target="_blank" style="color: #f5f5f5; font-size: 1.5rem; transition: color 0.3s ease;">
+            <i class="fab fa-instagram"></i>
+          </a>
+          <a href="#" style="color: #f5f5f5; font-size: 1.5rem; transition: color 0.3s ease;"><i class="fab fa-linkedin"></i></a>
+        </div>
+      </div>
+
+      <!-- Quick Links Column -->
+      <div>
+        <h3 style="color: #ff3366; font-size: 1.5rem; margin-bottom: 20px; position: relative; padding-bottom: 10px;">
+          Quick Links
+          <span style="position: absolute; bottom: 0; left: 0; width: 60px; height: 2px; background: #ff3366;"></span>
+        </h3>
+        <ul style="list-style: none; padding: 0; margin: 0;">
+          <li style="margin-bottom: 10px;"><a href="dashboard.html" style="color: #ddd; text-decoration: none; transition: color 0.3s ease; display: block;">Home</a></li>
+          <li style="margin-bottom: 10px;"><a href="BudgetTrack.html" style="color: #ddd; text-decoration: none; transition: color 0.3s ease; display: block;">Track Budget</a></li>
+          <li style="margin-bottom: 10px;"><a href="Recharge.html" style="color: #ddd; text-decoration: none; transition: color 0.3s ease; display: block;">Recharge</a></li>
+          <li style="margin-bottom: 10px;"><a href="about.html" style="color: #ddd; text-decoration: none; transition: color 0.3s ease; display: block;">About Us</a></li>
+          <li style="margin-bottom: 10px;"><a href="login.html" style="color: #ddd; text-decoration: none; transition: color 0.3s ease; display: block;">Login/Signup</a></li>
+        </ul>
+      </div>
+
+      <!-- Contact Column -->
+      <div>
+        <h3 style="color: #ff3366; font-size: 1.5rem; margin-bottom: 20px; position: relative; padding-bottom: 10px;">
+          Contact Us
+          <span style="position: absolute; bottom: 0; left: 0; width: 60px; height: 2px; background: #ff3366;"></span>
+        </h3>
+        <ul style="list-style: none; padding: 0; margin: 0;">
+          <li style="margin-bottom: 15px; display: flex; align-items: flex-start;">
+            <i class="fas fa-map-marker-alt" style="color: #ff3366; margin-right: 10px; margin-top: 3px;"></i>
+            <span style="color: #ddd;">123 Financial Street, Money City, MC 12345</span>
+          </li>
+          <li style="margin-bottom: 15px; display: flex; align-items: center;">
+            <i class="fas fa-phone-alt" style="color: #ff3366; margin-right: 10px;"></i>
+            <span style="color: #ddd;">+91 0123456789</span>
+          </li>
+          <li style="margin-bottom: 15px; display: flex; align-items: center;">
+            <i class="fas fa-envelope" style="color: #ff3366; margin-right: 10px;"></i>
+            <span style="color: #ddd;">pennywisecorps@gmail.com</span>
+          </li>
+        </ul>
+      </div>
+
+      <!-- Newsletter Column -->
+      <div>
+        <h3 style="color: #ff3366; font-size: 1.5rem; margin-bottom: 20px; position: relative; padding-bottom: 10px;">
+          Newsletter
+          <span style="position: absolute; bottom: 0; left: 0; width: 60px; height: 2px; background: #ff3366;"></span>
+        </h3>
+        <p style="color: #ddd; line-height: 1.6; margin-bottom: 20px;">
+          Subscribe to our newsletter for financial tips and updates.
+        </p>
+        <form style="display: flex; flex-wrap: wrap; gap: 10px; margin-top: 10px;">
+          <input type="email" placeholder="Your email" 
+                 style="flex: 1; min-width: 200px; padding: 12px 15px; border: none; border-radius: 5px; font-family: 'Poppins', sans-serif;">
+          <button type="submit" 
+                  style="background-color: #ff3366; color: white; border: none; padding: 12px 20px; border-radius: 5px; cursor: pointer; transition: background-color 0.3s ease;">
+            <i class="fas fa-paper-plane"></i>
+          </button>
+        </form>
+      </div>
+    </div>
+
+    <!-- Copyright -->
+    <div style="border-top: 1px solid #333; padding-top: 30px; text-align: center;">
+      <p style="color: #aaa; margin: 0 0 10px;">
+        &copy; 2025 PennyWise. All Rights Reserved.
+      </p>
+      <div style="display: flex; justify-content: center; flex-wrap: wrap; gap: 20px;">
+        <a href="#" style="color: #aaa; text-decoration: none; transition: color 0.3s ease;">Privacy Policy</a>
+        <a href="#" style="color: #aaa; text-decoration: none; transition: color 0.3s ease;">Terms of Service</a>
+        <a href="#" style="color: #aaa; text-decoration: none; transition: color 0.3s ease;">Sitemap</a>
+      </div>
+    </div>
+
+  </div>
+</footer>
+
+</html>

@@ -1,0 +1,408 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Budget Tracker</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;500;600;700&display=swap" rel="stylesheet">
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    <style>
+        :root {
+            --primary-color: #ff3366;
+            --secondary-color: #d4004e;
+            --accent-color: #ff3366;
+            --dark-color: #121212;
+            --light-color: #f8f8f8;
+            --border-radius: 12px;
+            --box-shadow: 0 4px 20px rgba(0, 0, 0, 0.15);
+            --card-bg: rgba(30,30,30,0.95);
+        }
+        
+        body {
+            background-color: var(--dark-color);
+            color: var(--light-color);
+            font-family: 'Poppins', sans-serif;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            min-height: 100vh;
+            margin: 0;
+            padding: 2rem 0;
+        }
+        
+        .logo-container {
+            text-align: center;
+            margin-bottom: 1.5rem;
+            width: 100%;
+        }
+        
+        .logo-container img {
+            height: 90px;
+            width: auto;
+            cursor: pointer;
+        }
+        
+        .container {
+            width: 90%;
+            max-width: 600px;
+            background-color: var(--card-bg);
+            border-radius: var(--border-radius);
+            padding: 2rem;
+            box-shadow: var(--box-shadow);
+            border: 1px solid rgba(255, 255, 255, 0.1);
+            margin: 1rem auto;
+        }
+        
+        h2, h3 {
+            color: var(--primary-color);
+            margin-top: 0;
+        }
+        
+        h2 {
+            font-size: 1.8rem;
+            margin-bottom: 1.5rem;
+            border-bottom: 1px solid rgba(255, 51, 102, 0.3);
+            padding-bottom: 0.5rem;
+        }
+        
+        h3 {
+            font-size: 1.3rem;
+            margin: 1.5rem 0 1rem;
+        }
+        
+        label {
+            display: block;
+            margin-top: 1rem;
+            font-weight: 500;
+            color: var(--primary-color);
+            font-size: 15px;
+        }
+        
+        input, select, button {
+            width: 100%;
+            padding: 14px 18px;
+            background-color: rgba(40,40,40,0.8);
+            border: 1px solid rgba(255,255,255,0.1);
+            border-radius: var(--border-radius);
+            font-size: 16px;
+            transition: all 0.2s;
+            color: var(--light-color);
+            margin: 8px 0 16px;
+            box-sizing: border-box;
+            height: 46px;
+        }
+        
+        select {
+            appearance: none;
+            background-image: url("data:image/svg+xml;charset=UTF-8,%3csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='white'%3e%3cpath d='M7 10l5 5 5-5z'/%3e%3c/svg%3e");
+            background-repeat: no-repeat;
+            background-position: right 12px center;
+            background-size: 16px;
+        }
+        
+        select option {
+            background-color: #2a2a2a;
+            color: var(--light-color);
+        }
+        
+        input:focus, select:focus {
+            outline: none;
+            border-color: var(--primary-color);
+            background-color: rgba(50,50,50,0.8);
+        }
+        
+        button {
+            background-color: var(--primary-color);
+            color: white;
+            font-weight: 600;
+            cursor: pointer;
+            border: none;
+        }
+        
+        button:hover {
+            background-color: var(--secondary-color);
+        }
+        
+        .chart-container {
+            width: 100%;
+            height: 300px;
+            margin: 2rem 0;
+        }
+        
+        .budget-list {
+            margin: 1.5rem 0;
+        }
+        
+        .budget-item {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 0.8rem;
+            background: rgba(255, 51, 102, 0.15);
+            margin: 0.5rem 0;
+            border-radius: var(--border-radius);
+            border-left: 3px solid var(--primary-color);
+            transition: all 0.3s ease;
+        }
+        
+        .budget-item:hover {
+            background: rgba(255, 51, 102, 0.25);
+        }
+        
+        .budget-item button {
+            width: auto;
+            padding: 0.4rem 0.8rem;
+            background: rgba(255, 51, 102, 0.3);
+            margin: 0;
+            font-size: 0.9rem;
+            height: auto;
+        }
+        
+        .budget-item button:hover {
+            background: var(--primary-color);
+        }
+        
+        #remainingBudget {
+            font-weight: 600;
+            color: #ffd700;
+            margin: 1.5rem 0;
+            font-size: 1.1rem;
+            text-align: center;
+            padding: 0.8rem;
+            background: rgba(255, 215, 0, 0.1);
+            border-radius: var(--border-radius);
+            border: 1px solid rgba(255, 215, 0, 0.2);
+        }
+        
+        .savings-banner {
+            display: none;
+            background-color: #ffd900c7;
+            color: #121212;
+            padding: 12px;
+            border-radius: var(--border-radius);
+            margin: 10px 0;
+            font-size: 14px;
+            line-height: 1.5;
+        }
+        
+        .savings-banner strong {
+            font-weight: 600;
+        }
+        
+        @media (max-width: 768px) {
+            .container {
+                width: 95%;
+                padding: 1.5rem;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="logo-container">
+        <img src="logo.png" alt="Budget Tracker Logo">
+    </div>
+    
+    <div class="container">
+        <h2>Budget Allocation</h2>
+        
+        <div id="budgetSection">
+            <h3>Set Your Budget</h3>
+            <select id="budgetCategory">
+                <option value="Food">Food</option>
+                <option value="Clothes">Clothes</option>
+                <option value="Rent">Rent</option>
+                <option value="Transport">Transport</option>
+                <option value="Goal Savings">Goal Savings</option>
+            </select>
+            <div id="savingsBanner" class="savings-banner">
+                <strong>Recommended Goal Savings: ₹<span id="recommendedSavings">0</span></strong><br>
+                (15% of your salary)<br><br>
+                This fund is allocated for the Wish and Aspiration feature of our app.<br>
+                Click the <strong>+ button</strong> in the dashboard page to add items to your wishlist.
+            </div>
+            <input type="text" id="customCategory" placeholder="Or enter custom category">
+            <input type="number" id="budgetAmount" placeholder="Amount">
+            <button onclick="addBudget()">Add Budget</button>
+           
+            <h3>Your Budget Allocation</h3>
+            <div id="budgetList" class="budget-list"></div>
+            <p id="remainingBudget">Remaining Budget: ₹0</p>
+
+            <div class="chart-container" id="chartContainer">
+                <canvas id="userBudgetChart"></canvas>
+            </div>
+            <button onclick="goToSummary()">Continue</button>
+        </div>
+    </div>
+
+    <script>
+        let totalSalary = 0, remainingBudget = 0;
+        let budgetData = [];
+        let chart;
+
+        // Initialize with salary from profile data
+        function initialize() {
+            // Get profile data from localStorage (from profile.html)
+            const profileData = JSON.parse(localStorage.getItem('profileData'));
+            
+            if (profileData && profileData.salary) {
+                totalSalary = parseFloat(profileData.salary);
+                document.getElementById("remainingBudget").textContent = `Remaining Budget: ₹${totalSalary.toFixed(2)}`;
+                
+                // Calculate and display recommended savings
+                const recommendedSavings = totalSalary * 0.15;
+                document.getElementById("recommendedSavings").textContent = recommendedSavings.toFixed(2);
+                
+                // Display greeting with user's name if available
+                const firstName = localStorage.getItem('firstName') || '';
+                if (firstName) {
+                    document.querySelector('h2').textContent = `${firstName}'s Budget Allocation`;
+                }
+            } else {
+                // Fallback if no profile data found
+                alert("No salary information found. Using default value.");
+                totalSalary = 50000;
+                document.getElementById("remainingBudget").textContent = `Remaining Budget: ₹${totalSalary.toFixed(2)}`;
+                const recommendedSavings = totalSalary * 0.15;
+                document.getElementById("recommendedSavings").textContent = recommendedSavings.toFixed(2);
+            }
+            
+            remainingBudget = totalSalary;
+            
+            // Load any existing budget data
+            const savedData = localStorage.getItem("budgetData");
+            if (savedData) {
+                budgetData = JSON.parse(savedData);
+                budgetData.forEach(item => {
+                    remainingBudget -= item.amount;
+                });
+                updateBudgetList();
+                updateChart();
+            }
+            
+            // Add event listener for category change
+            document.getElementById("budgetCategory").addEventListener("change", function() {
+                if (this.value === "Goal Savings") {
+                    document.getElementById("savingsBanner").style.display = "block";
+                } else {
+                    document.getElementById("savingsBanner").style.display = "none";
+                }
+            });
+        }
+
+        function addBudget() {
+            let category = document.getElementById("budgetCategory").value;
+            const customCategory = document.getElementById("customCategory").value.trim();
+            const amount = parseFloat(document.getElementById("budgetAmount").value) || 0;
+
+            if (customCategory) category = customCategory;
+            if (!category || amount <= 0 || amount > remainingBudget) {
+                alert("Invalid budget input or exceeds remaining budget!");
+                return;
+            }
+
+            const existing = budgetData.find(b => b.category.toLowerCase() === category.toLowerCase());
+            if (existing) {
+                existing.amount += amount;
+            } else {
+                budgetData.push({ category, amount });
+            }
+
+            remainingBudget -= amount;
+            document.getElementById("remainingBudget").textContent = `Remaining Budget: ₹${remainingBudget.toFixed(2)}`;
+            updateBudgetList();
+            updateChart();
+            localStorage.setItem("budgetData", JSON.stringify(budgetData));
+            
+            // Clear input fields
+            document.getElementById("budgetAmount").value = "";
+            document.getElementById("customCategory").value = "";
+        }
+
+        function deleteBudget(index) {
+            remainingBudget += budgetData[index].amount;
+            budgetData.splice(index, 1);
+            document.getElementById("remainingBudget").textContent = `Remaining Budget: ₹${remainingBudget.toFixed(2)}`;
+            updateBudgetList();
+            updateChart();
+            localStorage.setItem("budgetData", JSON.stringify(budgetData));
+        }
+
+        function updateBudgetList() {
+            const list = document.getElementById("budgetList");
+            list.innerHTML = "";
+            budgetData.forEach((item, index) => {
+                const div = document.createElement("div");
+                div.className = "budget-item";
+                div.innerHTML = `<span>${item.category}: ₹${item.amount.toFixed(2)}</span>
+                    <button onclick="deleteBudget(${index})">Delete</button>`;
+                list.appendChild(div);
+            });
+        }
+
+        function updateChart() {
+            if (!budgetData.length) {
+                document.getElementById("chartContainer").style.display = "none";
+                return;
+            }
+            document.getElementById("chartContainer").style.display = "block";
+            const ctx = document.getElementById("userBudgetChart").getContext("2d");
+            if (chart) chart.destroy();
+            chart = new Chart(ctx, {
+                type: "pie",
+                data: {
+                    labels: budgetData.map(item => item.category),
+                    datasets: [{
+                        data: budgetData.map(item => item.amount),
+                        backgroundColor: [
+                            "#ff3366", "#457b9d", "#a8dadc", "#1d3557", "#ffd166",
+                            "#06d6a0", "#118ab2", "#ef476f", "#073b4c", "#ff9e00"
+                        ],
+                        borderColor: "#1e1e1e",
+                        borderWidth: 2
+                    }]
+                },
+                options: {
+                    plugins: {
+                        legend: {
+                            position: 'right',
+                            labels: {
+                                color: "#f8f8f8",
+                                font: {
+                                    size: 14
+                                },
+                                padding: 20
+                            }
+                        },
+                        tooltip: {
+                            backgroundColor: "#1e1e1e",
+                            titleColor: "#f8f8f8",
+                            bodyColor: "#f8f8f8",
+                            borderColor: "#ff3366",
+                            borderWidth: 1,
+                            padding: 12,
+                            displayColors: true,
+                            usePointStyle: true
+                        }
+                    },
+                    cutout: '60%',
+                    animation: {
+                        animateScale: true,
+                        animateRotate: true
+                    }
+                }
+            });
+        }
+
+        function goToSummary() {
+            window.location.href = "BudgetTrack.html";
+        }
+
+        // Initialize when page loads
+        window.onload = initialize;
+    </script>
+</body>
+
+</html>

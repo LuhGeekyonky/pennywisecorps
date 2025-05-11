@@ -1,0 +1,968 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8"/>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>Explore Short-Term Goals | PennyWise</title>
+  <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;600&display=swap" rel="stylesheet">
+  <style>
+    :root {
+      --primary-color: #ff3366;
+      --secondary-color: #4CAF50;
+      --accent-color: #2196F3;
+      --dark-bg: #111;
+      --darker-bg: #000;
+      --light-text: #fff;
+      --border-color: #333;
+      --button-hover: #e02d5a;
+      --button-secondary: #3e8e41;
+      --button-accent: #0b7dda;
+    }
+    
+    body {
+      margin: 0;
+      background-color: var(--dark-bg);
+      color: var(--light-text);
+      font-family: 'Poppins', sans-serif;
+      min-height: 100vh;
+    }
+
+    /* NAVIGATION BAR */
+    .navbar {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      background-color: #0d0d0d;
+      padding: 20px;
+      position: sticky;
+      top: 0;
+      z-index: 1000;
+      transition: all 0.5s ease;
+      border-bottom: 1px solid #b3003c;
+    }
+    .navbar-links {
+      display: flex;
+      gap: 15px;
+      align-items: center;
+    }
+    .navbar a {
+      color: #f5f5f5;
+      text-decoration: none;
+      font-size: 18px;
+      font-family: 'Poppins', sans-serif;
+      transition: color 0.3s ease;
+    }
+    .navbar a:hover {
+      color: #ff3366;
+    }
+    .navbar img {
+      height: 120px;
+      transition: height 0.5s ease;
+    }
+    .shrink {
+      padding: 10px;
+    }
+    .shrink img {
+      height: 90px;
+    }
+
+    /* PLUS BUTTON STYLES */
+    .plus-button {
+      background-color: #FFD700;
+      color: #0d0d0d;
+      width: 36px;
+      height: 36px;
+      border-radius: 8px;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      font-size: 22px;
+      font-weight: bold;
+      cursor: pointer;
+      transition: all 0.3s ease;
+      position: relative;
+      margin-right: 5px;
+    }
+    .plus-button:hover {
+      background-color: #ffeb3b;
+      transform: scale(1.1);
+    }
+
+    /* PROFILE PICTURE DROPDOWN - UPDATED FOR CIRCULAR CROP */
+    .profile-dropdown {
+      position: relative;
+      margin-left: 10px;
+    }
+    .profile-pic-container {
+      width: 44px; /* Slightly larger to account for border */
+      height: 44px;
+      border-radius: 50%;
+      overflow: hidden;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      border: 2px solid #ff3366;
+      transition: all 0.3s ease;
+      background-color: #333;
+    }
+    .profile-pic {
+      width: 100%;
+      height: 100%;
+      object-fit: cover;
+      cursor: pointer;
+      transition: all 0.3s ease;
+    }
+    .profile-pic-container:hover {
+      transform: scale(1.1);
+      border-color: #ffeb3b;
+    }
+    .profile-menu {
+      position: absolute;
+      top: 100%;
+      right: 0;
+      background-color: #1a1a1a;
+      border-radius: 8px;
+      padding: 10px 0;
+      min-width: 150px;
+      box-shadow: 0 8px 16px rgba(0,0,0,0.3);
+      opacity: 0;
+      visibility: hidden;
+      transition: all 0.3s ease;
+      z-index: 1001;
+    }
+    .profile-dropdown.active .profile-menu {
+      opacity: 1;
+      visibility: visible;
+      transform: translateY(10px);
+    }
+    .profile-menu a {
+      display: block;
+      padding: 10px 20px;
+      color: #f5f5f5;
+      font-family: 'Poppins', sans-serif;
+      font-size: 16px;
+      transition: all 0.2s ease;
+    }
+    .profile-menu a:hover {
+      background-color: #ff3366;
+      color: white;
+      padding-left: 25px;
+    }
+
+    /* DROPDOWN MENU */
+    .dropdown-menu {
+      position: absolute;
+      top: 100%;
+      left: 0;
+      background-color: #1a1a1a;
+      border-radius: 8px;
+      padding: 10px 0;
+      min-width: 180px;
+      box-shadow: 0 8px 16px rgba(0,0,0,0.3);
+      opacity: 0;
+      visibility: hidden;
+      transition: all 0.3s ease;
+      z-index: 1001;
+    }
+    .plus-button.active .dropdown-menu {
+      opacity: 1;
+      visibility: visible;
+      transform: translateY(10px);
+    }
+    .dropdown-menu a {
+      display: block;
+      padding: 10px 20px;
+      color: #f5f5f5;
+      font-family: 'Poppins', sans-serif;
+      font-size: 16px;
+      transition: all 0.2s ease;
+    }
+    .dropdown-menu a:hover {
+      background-color: #ff3366;
+      color: white;
+      padding-left: 25px;
+    }
+
+    /* MAIN CONTAINER */
+    .container {
+      max-width: 900px;
+      margin: 60px auto;
+      padding: 0 30px;
+      text-align: center;
+    }
+
+    /* HEADINGS */
+    h1 {
+      font-size: clamp(2.5rem, 5vw, 4.5rem);
+      color: var(--primary-color);
+      margin-bottom: 0;
+    }
+
+    .tagline {
+      font-size: clamp(1rem, 2vw, 1.5rem);
+      font-weight: 600;
+      margin-bottom: 40px;
+      color: var(--light-text);
+      font-style: italic;
+    }
+
+    /* FORM STYLES */
+    .search-container {
+      background-color: var(--darker-bg);
+      padding: 30px;
+      border-radius: 10px;
+      margin-bottom: 30px;
+      border: 1px solid var(--border-color);
+      box-shadow: 0 0 15px rgba(0, 0, 0, 0.5);
+    }
+
+    .input-group {
+      margin-bottom: 20px;
+      text-align: left;
+    }
+    .input-group label {
+      display: block;
+      margin-bottom: 8px;
+      font-weight: 600;
+      color: var(--primary-color);
+    }
+    .input-group input,
+    .input-group select {
+      width: 90%;
+      padding: 12px 15px;
+      font-size: 1rem;
+      border-radius: 8px;
+      border: 2px solid var(--border-color);
+      background-color: var(--dark-bg);
+      color: var(--light-text);
+      transition: border-color 0.3s ease;
+    }
+    .input-group input:focus,
+    .input-group select:focus {
+      outline: none;
+      border-color: var(--primary-color);
+    }
+
+    /* DYNAMIC FIELDS */
+    .dynamic-fields {
+      background-color: var(--dark-bg);
+      padding: 15px;
+      border-radius: 8px;
+      margin-bottom: 20px;
+      border-left: 3px solid var(--accent-color);
+    }
+    .dynamic-fields .input-group input,
+    .dynamic-fields .input-group select {
+      width: 90%;
+    }
+
+    /* BUTTONS */
+    .search-btn {
+      background-color: var(--primary-color);
+      color: white;
+      padding: 14px 30px;
+      font-size: 1.1rem;
+      font-weight: 600;
+      border: none;
+      border-radius: 8px;
+      cursor: pointer;
+      transition: all 0.3s ease;
+      margin: 30px auto 0;
+      display: block;
+      box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+      width: auto;
+    }
+    .search-btn:hover {
+      background-color: var(--button-hover);
+      transform: translateY(-2px);
+      box-shadow: 0 6px 8px rgba(0, 0, 0, 0.15);
+    }
+
+    /* RESULTS SECTION */
+    .results-container {
+      margin-top: 30px;
+      text-align: left;
+    }
+    .result-item {
+      background-color: var(--darker-bg);
+      padding: 20px;
+      margin-bottom: 15px;
+      border-radius: 8px;
+      transition: all 0.3s ease;
+      border-left: 4px solid var(--primary-color);
+      cursor: pointer;
+      border: 1px solid var(--border-color);
+    }
+    .result-item:hover {
+      transform: translateX(5px);
+      background-color: #1a1a1a;
+    }
+    .result-item.selected {
+      border-left: 4px solid var(--secondary-color);
+      background-color: #1a1a1a;
+    }
+    .result-title {
+      font-size: 1.2rem;
+      font-weight: 600;
+      color: var(--light-text);
+      margin-bottom: 5px;
+    }
+    .result-date {
+      font-size: 0.9rem;
+      color: #aaa;
+      margin-bottom: 8px;
+    }
+    .result-price {
+      color: var(--secondary-color);
+      font-weight: bold;
+      font-size: 1.1rem;
+      margin-bottom: 10px;
+    }
+    .result-details {
+      color: #ccc;
+      margin-bottom: 10px;
+    }
+    .result-link {
+      display: inline-block;
+      padding: 8px 15px;
+      background-color: var(--accent-color);
+      color: white;
+      text-decoration: none;
+      border-radius: 5px;
+      font-weight: 600;
+      transition: all 0.3s ease;
+    }
+    .result-link:hover {
+      background-color: var(--button-accent);
+      transform: translateY(-1px);
+    }
+
+    /* LOADING STATE */
+    .loading {
+      display: none;
+      margin: 20px 0;
+      text-align: center;
+    }
+    .spinner {
+      border: 4px solid rgba(255, 255, 255, 0.3);
+      border-radius: 50%;
+      border-top: 4px solid var(--primary-color);
+      width: 30px;
+      height: 30px;
+      animation: spin 1s linear infinite;
+      margin: 0 auto 10px;
+    }
+    @keyframes spin {
+      0% { transform: rotate(0deg); }
+      100% { transform: rotate(360deg); }
+    }
+
+    /* NO RESULTS STATE */
+    .no-results {
+      text-align: center;
+      padding: 30px;
+      background-color: var(--darker-bg);
+      border-radius: 8px;
+      border: 1px solid var(--border-color);
+    }
+
+    /* RESPONSIVE STYLES */
+    @media (max-width: 768px) {
+      .navbar {
+        padding: 15px 20px;
+        flex-direction: column;
+        text-align: center;
+      }
+      .navbar-links {
+        margin-top: 15px;
+        flex-wrap: wrap;
+        justify-content: center;
+      }
+      .navbar a {
+        margin: 5px 10px;
+      }
+      .container {
+        margin: 30px auto;
+        padding: 0 20px;
+      }
+      .search-container {
+        padding: 20px;
+      }
+      .input-group input,
+      .input-group select {
+        width: 100%;
+      }
+      .dynamic-fields .input-group input,
+      .dynamic-fields .input-group select {
+        width: 100%;
+      }
+    }
+  </style>
+</head>
+<body>
+  <!-- Navigation Bar -->
+  <div class="navbar">
+    <div>
+      <img src="logo.png" alt="Logo">
+    </div>
+    <div class="navbar-links">
+      <div class="plus-button">
+        +
+        <div class="dropdown-menu">
+          <a href="wish.html">My Wish</a>
+          <a href="aspiration.html">My Aspiration</a>
+        </div>
+      </div>
+      <a href="dashboard.html">Home</a>
+      <a href="BudgetTrack.html">Track</a>
+      <a href="Recharge.html">Recharge</a>
+      <a href="about.html">About Us</a>
+      <div class="profile-dropdown">
+        <div class="profile-pic-container">
+          <img id="profilePicture" class="profile-pic" src="pfp.png" alt="Profile">
+        </div>
+        <div class="profile-menu">
+          <a href="pf.html">Profile</a>
+          <a href="login.html">Logout</a>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <div class="container">
+    <h1>Explore Short-Term Goals</h1>
+    <div class="tagline">Find the best deals for your immediate wishlist items</div>
+
+    <div class="search-container" style="background-color: var(--darker-bg); padding: 30px; border-radius: 10px; margin-bottom: 30px; border: 1px solid var(--border-color); box-shadow: 0 0 15px rgba(0, 0, 0, 0.5);">
+      <div class="input-group">
+        <label for="item-type">What I'm looking for</label>
+        <select id="item-type" style="width: 90%; padding: 12px 15px; font-size: 1rem; border-radius: 8px; border: 2px solid var(--border-color); background-color: var(--dark-bg); color: var(--light-text); transition: border-color 0.3s ease;">
+          <option value="">Select item type</option>
+          <option value="mobile">Mobile Phone</option>
+          <option value="two-wheeler">Two Wheeler</option>
+          <option value="clothing">Luxury Clothing/Accessories</option>
+          <option value="electronics">Electronics</option>
+          <option value="watch">Luxury Watch</option>
+          <option value="custom">Custom (Type your own)</option>
+        </select>
+      </div>
+      <div id="dynamic-fields-container"></div>
+      <div class="input-group" id="custom-input-group" style="display: none;">
+        <label for="custom-input">What are you looking for?</label>
+        <input type="text" id="custom-input" placeholder="Type exactly what you're searching for" style="width: 90%; padding: 12px 15px; font-size: 1rem; border-radius: 8px; border: 2px solid var(--border-color); background-color: var(--dark-bg); color: var(--light-text); transition: border-color 0.3s ease;">
+      </div>
+      <div class="input-group">
+        <label for="location">Preferred Location (optional)</label>
+        <input type="text" id="location" placeholder="e.g. Mumbai, Bangalore" style="width: 90%; padding: 12px 15px; font-size: 1rem; border-radius: 8px; border: 2px solid var(--border-color); background-color: var(--dark-bg); color: var(--light-text); transition: border-color 0.3s ease;">
+      </div>
+      <button class="search-btn" id="search-btn" style="background-color: var(--primary-color); color: white; padding: 14px 30px; font-size: 1.1rem; font-weight: 600; border: none; border-radius: 8px; cursor: pointer; transition: all 0.3s ease; margin: 30px auto 0; display: block; box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1); width: auto;">Find Items</button>
+    </div>
+
+    <div class="loading" id="loading">
+      <div class="spinner"></div>
+      <p>Searching for the best deals...</p>
+    </div>
+
+    <div class="results-container" id="results-container"></div>
+  </div>
+
+  <script>
+    // Base URL of the Node.js API server - change to your deployed server URL
+    const API_BASE_URL = 'http://localhost:3000';
+
+    document.addEventListener('DOMContentLoaded', () => {
+      // Load profile picture from localStorage
+      const profilePic = document.getElementById('profilePicture');
+      
+      // Check if profileData exists in localStorage and has a profilePicture
+      try {
+        const profileData = JSON.parse(localStorage.getItem('profileData'));
+        if (profileData && profileData.profilePicture) {
+          profilePic.src = profileData.profilePicture;
+        }
+      } catch (e) {
+        console.error('Error parsing profile data from localStorage:', e);
+      }
+
+      // Plus button functionality
+      const plusButton = document.querySelector('.plus-button');
+      plusButton.addEventListener('click', function(e) {
+        e.stopPropagation();
+        this.classList.toggle('active');
+      });
+      
+      // Profile dropdown functionality
+      const profileDropdown = document.querySelector('.profile-dropdown');
+      profileDropdown.addEventListener('click', function(e) {
+        e.stopPropagation();
+        this.classList.toggle('active');
+      });
+      
+      // Close dropdowns when clicking outside
+      document.addEventListener('click', function() {
+        plusButton.classList.remove('active');
+        profileDropdown.classList.remove('active');
+      });
+
+      // Navbar shrink on scroll
+      window.addEventListener('scroll', function() {
+        var navbar = document.querySelector('.navbar');
+        if (window.scrollY > 50) {
+          navbar.classList.add('shrink');
+        } else {
+          navbar.classList.remove('shrink');
+        }
+      });
+
+      // Elements
+      const searchBtn = document.getElementById('search-btn');
+      const itemType = document.getElementById('item-type');
+      const locationInput = document.getElementById('location');
+      const resultsContainer = document.getElementById('results-container');
+      const loadingElement = document.getElementById('loading');
+      const dynamicFieldsContainer = document.getElementById('dynamic-fields-container');
+      const customInputGroup = document.getElementById('custom-input-group');
+      const customInput = document.getElementById('custom-input');
+
+      itemType.addEventListener('change', () => {
+        const type = itemType.value;
+        dynamicFieldsContainer.innerHTML = '';
+        customInputGroup.style.display = 'none';
+        if (type === 'custom') {
+          customInputGroup.style.display = 'block';
+          return;
+        }
+        if (!type) return;
+        const dynamicFields = document.createElement('div');
+        dynamicFields.className = 'dynamic-fields';
+        switch(type) {
+          case 'mobile':
+            dynamicFields.innerHTML = `
+              <div class="input-group">
+                <label for="mobile-brand">Brand</label>
+                <select id="mobile-brand">
+                  <option value="">Any brand</option>
+                  <option value="apple">Apple</option>
+                  <option value="samsung">Samsung</option>
+                  <option value="oneplus">OnePlus</option>
+                  <option value="xiaomi">Xiaomi</option>
+                  <option value="realme">Realme</option>
+                  <option value="oppo">Oppo</option>
+                </select>
+              </div>
+              <div class="input-group">
+                <label for="mobile-model">Model (optional)</label>
+                <input type="text" id="mobile-model" placeholder="e.g. iPhone 13, Galaxy S22">
+              </div>
+              <div class="input-group">
+                <label for="mobile-storage">Storage</label>
+                <select id="mobile-storage">
+                  <option value="">Any storage</option>
+                  <option value="64">64GB</option>
+                  <option value="128">128GB</option>
+                  <option value="256">256GB</option>
+                  <option value="512">512GB</option>
+                </select>
+              </div>
+              <div class="input-group">
+                <label for="mobile-condition">Condition</label>
+                <select id="mobile-condition">
+                  <option value="">Any condition</option>
+                  <option value="new">New</option>
+                  <option value="refurbished">Refurbished</option>
+                  <option value="used">Used</option>
+                </select>
+              </div>
+            `;
+            break;
+          case 'two-wheeler':
+            dynamicFields.innerHTML = `
+              <div class="input-group">
+                <label for="bike-brand">Brand</label>
+                <select id="bike-brand">
+                  <option value="">Any brand</option>
+                  <option value="royal-enfield">Royal Enfield</option>
+                  <option value="bajaj">Bajaj</option>
+                  <option value="tvs">TVS</option>
+                  <option value="hero">Hero</option>
+                  <option value="honda">Honda</option>
+                  <option value="yamaha">Yamaha</option>
+                </select>
+              </div>
+              <div class="input-group">
+                <label for="bike-model">Model (optional)</label>
+                <input type="text" id="bike-model" placeholder="e.g. Classic 350, Pulsar 220">
+              </div>
+              <div class="input-group">
+                <label for="bike-type">Type</label>
+                <select id="bike-type">
+                  <option value="">Any type</option>
+                  <option value="scooter">Scooter</option>
+                  <option value="motorcycle">Motorcycle</option>
+                  <option value="sports">Sports Bike</option>
+                  <option value="cruiser">Cruiser</option>
+                </select>
+              </div>
+              <div class="input-group">
+                <label for="bike-year">Year (optional)</label>
+                <input type="number" id="bike-year" placeholder="e.g. 2020" min="2000" max="${new Date().getFullYear()}">
+              </div>
+            `;
+            break;
+          case 'clothing':
+            dynamicFields.innerHTML = `
+              <div class="input-group">
+                <label for="clothing-type">Type</label>
+                <select id="clothing-type">
+                  <option value="">Any type</option>
+                  <option value="shirt">Shirt</option>
+                  <option value="t-shirt">T-Shirt</option>
+                  <option value="jeans">Jeans</option>
+                  <option value="jacket">Jacket</option>
+                  <option value="sneakers">Sneakers</option>
+                  <option value="accessory">Accessory</option>
+                </select>
+              </div>
+              <div class="input-group">
+                <label for="clothing-brand">Brand (optional)</label>
+                <input type="text" id="clothing-brand" placeholder="e.g. Gucci, Louis Vuitton">
+              </div>
+              <div class="input-group">
+                <label for="clothing-size">Size (optional)</label>
+                <input type="text" id="clothing-size" placeholder="e.g. M, 42, 10">
+              </div>
+              <div class="input-group">
+                <label for="clothing-condition">Condition</label>
+                <select id="clothing-condition">
+                  <option value="">Any condition</option>
+                  <option value="new">New</option>
+                  <option value="used">Used</option>
+                  <option value="vintage">Vintage</option>
+                </select>
+              </div>
+            `;
+            break;
+          case 'electronics':
+            dynamicFields.innerHTML = `
+              <div class="input-group">
+                <label for="electronics-type">Type</label>
+                <select id="electronics-type">
+                  <option value="">Any type</option>
+                  <option value="laptop">Laptop</option>
+                  <option value="tablet">Tablet</option>
+                  <option value="camera">Camera</option>
+                  <option value="headphones">Headphones</option>
+                  <option value="speaker">Speaker</option>
+                </select>
+              </div>
+              <div class="input-group">
+                <label for="electronics-brand">Brand (optional)</label>
+                <input type="text" id="electronics-brand" placeholder="e.g. Apple, Sony">
+              </div>
+              <div class="input-group">
+                <label for="electronics-model">Model (optional)</label>
+                <input type="text" id="electronics-model" placeholder="e.g. MacBook Air, WH-1000XM4">
+              </div>
+              <div class="input-group">
+                <label for="electronics-condition">Condition</label>
+                <select id="electronics-condition">
+                  <option value="">Any condition</option>
+                  <option value="new">New</option>
+                  <option value="refurbished">Refurbished</option>
+                  <option value="used">Used</option>
+                </select>
+              </div>
+            `;
+            break;
+          case 'watch':
+            dynamicFields.innerHTML = `
+              <div class="input-group">
+                <label for="watch-brand">Brand</label>
+                <select id="watch-brand">
+                  <option value="">Any brand</option>
+                  <option value="rolex">Rolex</option>
+                  <option value="omega">Omega</option>
+                  <option value="titan">Titan</option>
+                  <option value="rado">Rado</option>
+                  <option value="fossil">Fossil</option>
+                </select>
+              </div>
+              <div class="input-group">
+                <label for="watch-model">Model (optional)</label>
+                <input type="text" id="watch-model" placeholder="e.g. Submariner, Speedmaster">
+              </div>
+              <div class="input-group">
+                <label for="watch-type">Type</label>
+                <select id="watch-type">
+                  <option value="">Any type</option>
+                  <option value="analog">Analog</option>
+                  <option value="digital">Digital</option>
+                  <option value="smart">Smartwatch</option>
+                  <option value="chronograph">Chronograph</option>
+                </select>
+              </div>
+              <div class="input-group">
+                <label for="watch-condition">Condition</label>
+                <select id="watch-condition">
+                  <option value="">Any condition</option>
+                  <option value="new">New</option>
+                  <option value="used">Used</option>
+                  <option value="vintage">Vintage</option>
+                </select>
+              </div>
+            `;
+            break;
+        }
+        // extra specs for all except custom
+        if (itemType.value !== 'custom') {
+          const extraSpecs = document.createElement('div');
+          extraSpecs.className = 'input-group';
+          extraSpecs.innerHTML = `
+            <label for="extra-specs">Extra Specifications (optional)</label>
+            <input type="text" id="extra-specs" placeholder="Any additional requirements">
+          `;
+          dynamicFields.appendChild(extraSpecs);
+        }
+        dynamicFieldsContainer.appendChild(dynamicFields);
+      });
+
+      searchBtn.addEventListener('click', async () => {
+        const type = itemType.value;
+        if (!type) {
+          alert('Please select what you are looking for');
+          return;
+        }
+        
+        loadingElement.style.display = 'block';
+        resultsContainer.innerHTML = '';
+        
+        try {
+          // Collect search parameters
+          let queryParams = '';
+          if (type === 'custom') {
+            const customSearch = customInput.value.trim();
+            if (!customSearch) {
+              alert('Please enter what you are looking for');
+              loadingElement.style.display = 'none';
+              return;
+            }
+            queryParams = `query=${encodeURIComponent(customSearch)}`;
+          } else {
+            // Get all form data based on type
+            const formData = {};
+            
+            switch(type) {
+              case 'mobile':
+                formData.brand = document.getElementById('mobile-brand')?.value || '';
+                formData.model = document.getElementById('mobile-model')?.value || '';
+                formData.storage = document.getElementById('mobile-storage')?.value || '';
+                formData.condition = document.getElementById('mobile-condition')?.value || '';
+                break;
+              case 'two-wheeler':
+                formData.brand = document.getElementById('bike-brand')?.value || '';
+                formData.model = document.getElementById('bike-model')?.value || '';
+                formData.type = document.getElementById('bike-type')?.value || '';
+                formData.year = document.getElementById('bike-year')?.value || '';
+                break;
+              case 'clothing':
+                formData.type = document.getElementById('clothing-type')?.value || '';
+                formData.brand = document.getElementById('clothing-brand')?.value || '';
+                formData.size = document.getElementById('clothing-size')?.value || '';
+                formData.condition = document.getElementById('clothing-condition')?.value || '';
+                break;
+              case 'electronics':
+                formData.type = document.getElementById('electronics-type')?.value || '';
+                formData.brand = document.getElementById('electronics-brand')?.value || '';
+                formData.model = document.getElementById('electronics-model')?.value || '';
+                formData.condition = document.getElementById('electronics-condition')?.value || '';
+                break;
+              case 'watch':
+                formData.brand = document.getElementById('watch-brand')?.value || '';
+                formData.model = document.getElementById('watch-model')?.value || '';
+                formData.type = document.getElementById('watch-type')?.value || '';
+                formData.condition = document.getElementById('watch-condition')?.value || '';
+                break;
+            }
+            
+            // Add extra specs if available
+            const extraSpecs = document.getElementById('extra-specs')?.value || '';
+            if (extraSpecs) {
+              formData.specs = extraSpecs;
+            }
+            
+            // Convert to query string
+            queryParams = new URLSearchParams(formData).toString();
+          }
+          
+          // Add location if specified
+          const location = locationInput.value.trim();
+          const locationParam = location ? `&location=${encodeURIComponent(location)}` : '';
+          
+          // Call the API
+          const response = await fetch(`${API_BASE_URL}/api/search?type=${type}${queryParams ? '&' + queryParams : ''}${locationParam}`);
+          
+          if (!response.ok) {
+            throw new Error(`Server returned ${response.status}: ${response.statusText}`);
+          }
+          
+          const results = await response.json();
+          
+          // Display results
+          if (!results.length) {
+            resultsContainer.innerHTML = `
+              <div class="no-results">
+                <h3>No items found</h3>
+                <p>Try adjusting your search criteria or check back later for new listings.</p>
+              </div>
+            `;
+          } else {
+            resultsContainer.innerHTML = '';
+            results.forEach(r => {
+              const el = document.createElement('div');
+              el.className = 'result-item';
+              el.innerHTML = `
+                <div class="result-title">${r.title}</div>
+                <div class="result-date">Posted: ${new Date(r.date).toLocaleDateString('en-IN', {
+                  day: 'numeric', month: 'short', year: 'numeric'
+                })}</div>
+                <div class="result-price">₹${r.price.toLocaleString('en-IN')}</div>
+                <div class="result-details">
+                  ${r.details}<br>
+                  <strong>Location:</strong> ${r.location}<br>
+                  <strong>Source:</strong> ${r.source}
+                </div>
+                <a href="${r.url}" target="_blank" class="result-link">View on ${r.source}</a>
+              `;
+              
+              // Keep the double-click functionality to select an item
+              el.addEventListener('dblclick', () => {
+                localStorage.setItem('selectedWish', JSON.stringify({
+                  name: r.title,
+                  details: r.details,
+                  price: r.price,
+                  source: r.source,
+                  url: r.url,
+                  location: r.location,
+                  type: type
+                }));
+                window.location.href = 'wish.html';
+              });
+              
+              resultsContainer.appendChild(el);
+            });
+          }
+        } catch (error) {
+          console.error('Error fetching search results:', error);
+          resultsContainer.innerHTML = `
+            <div class="no-results">
+              <h3>Error fetching results</h3>
+              <p>There was a problem with the search. Please try again later.</p>
+              <p>${error.message}</p>
+            </div>
+          `;
+        } finally {
+          loadingElement.style.display = 'none';
+        }
+      });
+    });
+  </script>
+</body>
+<!-- Footer Section -->
+<footer style="background-color: #0d0d0d; color: #f5f5f5; font-family: 'Poppins', sans-serif; padding: 50px 0 20px; border-top: 1px solid #b3003c;">
+  <div style="max-width: 1200px; margin: 0 auto; padding: 0 20px;">
+    <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(250px, 1fr)); gap: 40px; margin-bottom: 40px;">
+      
+      <!-- About Column -->
+      <div>
+        <h3 style="color: #ff3366; font-size: 1.5rem; margin-bottom: 20px; position: relative; padding-bottom: 10px;">
+          About PennyWise
+          <span style="position: absolute; bottom: 0; left: 0; width: 60px; height: 2px; background: #ff3366;"></span>
+        </h3>
+        <p style="color: #ddd; line-height: 1.6; margin-bottom: 20px;">
+          Your personal financial companion helping you track expenses, manage budgets, and achieve your financial goals.
+        </p>
+        <div style="display: flex; gap: 15px;">
+          <a href="#" style="color: #f5f5f5; font-size: 1.5rem; transition: color 0.3s ease;"><i class="fab fa-facebook"></i></a>
+          <a href="https://x.com/pennywisecorps" target="_blank" style="color: #f5f5f5; font-size: 1.5rem; transition: color 0.3s ease;">
+            <i class="fab fa-twitter"></i>
+          </a>
+          <a href="https://www.instagram.com/pennywisecorps" target="_blank" style="color: #f5f5f5; font-size: 1.5rem; transition: color 0.3s ease;">
+            <i class="fab fa-instagram"></i>
+          </a>
+          <a href="#" style="color: #f5f5f5; font-size: 1.5rem; transition: color 0.3s ease;"><i class="fab fa-linkedin"></i></a>
+        </div>
+      </div>
+
+      <!-- Quick Links Column -->
+      <div>
+        <h3 style="color: #ff3366; font-size: 1.5rem; margin-bottom: 20px; position: relative; padding-bottom: 10px;">
+          Quick Links
+          <span style="position: absolute; bottom: 0; left: 0; width: 60px; height: 2px; background: #ff3366;"></span>
+        </h3>
+        <ul style="list-style: none; padding: 0; margin: 0;">
+          <li style="margin-bottom: 10px;"><a href="dashboard.html" style="color: #ddd; text-decoration: none; transition: color 0.3s ease; display: block;">Home</a></li>
+          <li style="margin-bottom: 10px;"><a href="BudgetTrack.html" style="color: #ddd; text-decoration: none; transition: color 0.3s ease; display: block;">Track Budget</a></li>
+          <li style="margin-bottom: 10px;"><a href="Recharge.html" style="color: #ddd; text-decoration: none; transition: color 0.3s ease; display: block;">Recharge</a></li>
+          <li style="margin-bottom: 10px;"><a href="about.html" style="color: #ddd; text-decoration: none; transition: color 0.3s ease; display: block;">About Us</a></li>
+          <li style="margin-bottom: 10px;"><a href="login.html" style="color: #ddd; text-decoration: none; transition: color 0.3s ease; display: block;">Login/Signup</a></li>
+        </ul>
+      </div>
+
+      <!-- Contact Column -->
+      <div>
+        <h3 style="color: #ff3366; font-size: 1.5rem; margin-bottom: 20px; position: relative; padding-bottom: 10px;">
+          Contact Us
+          <span style="position: absolute; bottom: 0; left: 0; width: 60px; height: 2px; background: #ff3366;"></span>
+        </h3>
+        <ul style="list-style: none; padding: 0; margin: 0;">
+          <li style="margin-bottom: 15px; display: flex; align-items: flex-start;">
+            <i class="fas fa-map-marker-alt" style="color: #ff3366; margin-right: 10px; margin-top: 3px;"></i>
+            <span style="color: #ddd;">123 Financial Street, Money City, MC 12345</span>
+          </li>
+          <li style="margin-bottom: 15px; display: flex; align-items: center;">
+            <i class="fas fa-phone-alt" style="color: #ff3366; margin-right: 10px;"></i>
+            <span style="color: #ddd;">+91 0123456789</span>
+          </li>
+          <li style="margin-bottom: 15px; display: flex; align-items: center;">
+            <i class="fas fa-envelope" style="color: #ff3366; margin-right: 10px;"></i>
+            <span style="color: #ddd;">pennywisecorps@gmail.com</span>
+          </li>
+        </ul>
+      </div>
+
+      <!-- Newsletter Column -->
+      <div>
+        <h3 style="color: #ff3366; font-size: 1.5rem; margin-bottom: 20px; position: relative; padding-bottom: 10px;">
+          Newsletter
+          <span style="position: absolute; bottom: 0; left: 0; width: 60px; height: 2px; background: #ff3366;"></span>
+        </h3>
+        <p style="color: #ddd; line-height: 1.6; margin-bottom: 20px;">
+          Subscribe to our newsletter for financial tips and updates.
+        </p>
+        <form style="display: flex; flex-wrap: wrap; gap: 10px; margin-top: 10px;">
+          <input type="email" placeholder="Your email" 
+                 style="flex: 1; min-width: 200px; padding: 12px 15px; border: none; border-radius: 5px; font-family: 'Poppins', sans-serif;">
+          <button type="submit" 
+                  style="background-color: #ff3366; color: white; border: none; padding: 12px 20px; border-radius: 5px; cursor: pointer; transition: background-color 0.3s ease;">
+            <i class="fas fa-paper-plane"></i>
+          </button>
+        </form>
+      </div>
+    </div>
+
+    <!-- Copyright -->
+    <div style="border-top: 1px solid #333; padding-top: 30px; text-align: center;">
+      <p style="color: #aaa; margin: 0 0 10px;">
+        &copy; 2025 PennyWise. All Rights Reserved.
+      </p>
+      <div style="display: flex; justify-content: center; flex-wrap: wrap; gap: 20px;">
+        <a href="#" style="color: #aaa; text-decoration: none; transition: color 0.3s ease;">Privacy Policy</a>
+        <a href="#" style="color: #aaa; text-decoration: none; transition: color 0.3s ease;">Terms of Service</a>
+        <a href="#" style="color: #aaa; text-decoration: none; transition: color 0.3s ease;">Sitemap</a>
+      </div>
+    </div>
+
+  </div>
+</footer>
+
+</html>

@@ -1,0 +1,180 @@
+<!DOCTYPE html>
+<html>
+    <head>
+        <meta charset="UTF-8">
+        <meta name="viewport" content="width=device-width, initial-scale=1.0">
+        <title>Sign Up</title>
+        <link rel="preconnect" href="https://fonts.googleapis.com">
+        <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+        <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600&display=swap" rel="stylesheet">
+        <style>
+            body {
+                background-color: black;
+                color: #ffffff;
+                font-family: 'Inter', -apple-system, BlinkMacSystemFont, sans-serif;
+                font-size: 16px;
+                font-weight: 400;
+                line-height: 1.6;
+                display: flex;
+                height: 100vh;
+                margin: 0;
+                overflow: hidden;
+            }
+            .left-section {
+                width: 50%;
+                padding: 40px;
+                display: flex;
+                flex-direction: column;
+                justify-content: center;
+                background: linear-gradient(90deg, 
+                            rgba(230, 57, 70, 0.2) 0%, 
+                            rgba(230, 57, 70, 0.1) 15%, 
+                            rgba(0, 0, 0, 1) 40%);
+                background-attachment: fixed;
+                background-color: #000;
+            }
+            .right-section {
+                width: 50%;
+                position: relative;
+                overflow: hidden;
+            }
+            #bg-video {
+                width: 100%;
+                height: 100%;
+                object-fit: cover;
+                position: absolute;
+                top: 0;
+                left: 0;
+            }
+            .logo {
+                width: 50%;
+                height: auto;
+                margin-bottom: 20px;
+                filter: drop-shadow(0 0 8px rgba(230, 57, 70, 0.4));
+            }
+            .container {
+                text-align: left;
+            }
+            form {
+                padding: 30px 0;
+            }
+            label {
+                display: block;
+                margin-bottom: 8px;
+                font-weight: 500;
+                font-size: 0.9rem;
+                color: rgba(255, 255, 255, 0.9);
+            }
+            input {
+                width: 100%;
+                padding: 12px;
+                margin: 0 0 20px 0;
+                border: none;
+                border-radius: 5px;
+                background-color: rgba(255, 255, 255, 0.08);
+                color: #fff;
+                font-family: inherit;
+                font-size: 0.95rem;
+                transition: all 0.2s ease;
+                border: 1px solid rgba(255, 255, 255, 0.05);
+            }
+            input:focus {
+                outline: none;
+                box-shadow: 0 0 0 2px rgba(230, 57, 70, 0.5);
+                background-color: rgba(255, 255, 255, 0.12);
+                border-color: rgba(230, 57, 70, 0.3);
+            }
+            input::placeholder {
+                color: rgba(255, 255, 255, 0.5);
+                font-weight: 300;
+            }
+            button {
+                width: 40%;
+                padding: 12px;
+                border: none;
+                border-radius: 5px;
+                background: linear-gradient(135deg, rgba(230, 57, 70, 0.9), rgba(193, 18, 31, 0.9));
+                color: #ffffff;
+                cursor: pointer;
+                font-size: 1rem;
+                font-weight: 500;
+                font-family: inherit;
+                transition: all 0.2s ease;
+                letter-spacing: 0.5px;
+                margin-top: 10px;
+            }
+            button:hover {
+                background: linear-gradient(135deg, rgba(230, 57, 70, 1), rgba(193, 18, 31, 1));
+                transform: translateY(-2px);
+                box-shadow: 0 4px 12px rgba(230, 57, 70, 0.3);
+            }
+            h1, h2, h3 {
+                font-weight: 600;
+                letter-spacing: -0.5px;
+                color: rgba(230, 57, 70, 0.9);
+            }
+        </style>
+    </head>
+    <body>
+        <div class="left-section">
+            <div class="container">
+                <header>
+                    <img src="logo.png" alt="Company Logo" class="logo">
+                </header>
+                <form id="signupForm">
+                    <label for="first">First Name</label>
+                    <input type="text" id="first" name="first" placeholder="First Name*" required>
+                    
+                    <label for="last">Last Name</label>
+                    <input type="text" id="last" name="last" placeholder="Last Name*" required>
+                    
+                    <label for="username">Username</label>
+                    <input type="text" id="username" name="username" placeholder="Username*" required>
+                    
+                    <label for="password">Password</label>
+                    <input type="password" id="password" name="password" placeholder="Password*" required>
+                    
+                    <button type="submit">Sign Up</button>
+                </form>
+            </div>
+        </div>
+        
+        <div class="right-section">
+            <video id="bg-video" autoplay muted playsinline loop>
+                <source src="time.mp4" type="video/mp4">
+                Your browser does not support the video tag.
+            </video>
+        </div>
+        
+        <script>
+            document.getElementById("signupForm").addEventListener("submit", function(event) {
+                event.preventDefault();
+                
+                let userInfo = {
+                    firstName: document.getElementById("first").value,
+                    lastName: document.getElementById("last").value,
+                    username: document.getElementById("username").value,
+                    password: document.getElementById("password").value
+                };
+                
+                localStorage.setItem("userInfo", JSON.stringify(userInfo));
+                alert("Sign-up information saved!");
+                
+                window.location.href = "profile.html";
+            });
+            
+            // Ensure video fills the container
+            const video = document.getElementById('bg-video');
+            function resizeVideo() {
+                video.style.width = '100%';
+                video.style.height = '100%';
+                video.style.objectFit = 'cover';
+            }
+            
+            // Initial resize
+            resizeVideo();
+            // Resize on window change
+            window.addEventListener('resize', resizeVideo);
+        </script>
+    </body>
+</html>

@@ -1,0 +1,1023 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8"/>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>Explore Investments | PennyWise</title>
+  <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;600&display=swap" rel="stylesheet">
+  <style>
+    :root {
+      --primary-color: #ff3366;
+      --secondary-color: #4CAF50;
+      --accent-color: #2196F3;
+      --dark-bg: #111;
+      --darker-bg: #000;
+      --light-text: #fff;
+      --border-color: #333;
+      --button-hover: #e02d5a;
+      --button-secondary: #3e8e41;
+      --button-accent: #0b7dda;
+    }
+    
+    body {
+      margin: 0;
+      background-color: var(--dark-bg);
+      color: var(--light-text);
+      font-family: 'Poppins', sans-serif;
+      min-height: 100vh;
+    }
+
+    /* NAVIGATION BAR */
+    .navbar {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      background-color: var(--darker-bg);
+      padding: 20px 40px;
+      position: sticky;
+      top: 0;
+      z-index: 1000;
+      transition: all 0.5s ease;
+      border-bottom: 1px solid var(--primary-color);
+    }
+    .navbar img {
+      height: 120px;
+      transition: height 0.5s ease;
+    }
+    .navbar-links {
+      display: flex;
+      align-items: center;
+      gap: 15px;
+    }
+    .navbar a {
+      color: var(--light-text);
+      text-decoration: none;
+      font-size: 17px;
+      font-weight: 500;
+      transition: color 0.3s ease;
+    }
+    .navbar a:hover {
+      color: var(--primary-color);
+    }
+    .shrink {
+      padding: 10px 40px;
+    }
+    .shrink img {
+      height: 90px;
+    }
+
+    /* PLUS BUTTON & DROPDOWN */
+    .plus-button {
+      background-color: #FFD700;
+      color: #0d0d0d;
+      width: 36px;
+      height: 36px;
+      border-radius: 8px;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      font-size: 22px;
+      font-weight: bold;
+      cursor: pointer;
+      position: relative;
+      transition: all 0.3s ease;
+    }
+    .plus-button:hover {
+      background-color: #ffeb3b;
+      transform: scale(1.1);
+    }
+    .dropdown-menu {
+      position: absolute;
+      top: 100%;
+      left: 0;
+      background-color: #1a1a1a;
+      border-radius: 8px;
+      padding: 10px 0;
+      min-width: 160px;
+      box-shadow: 0 8px 16px rgba(0,0,0,0.3);
+      opacity: 0;
+      visibility: hidden;
+      transform: translateY(-10px);
+      transition: all 0.3s ease;
+      z-index: 1001;
+    }
+    .plus-button.active .dropdown-menu {
+      opacity: 1;
+      visibility: visible;
+      transform: translateY(0);
+    }
+    .dropdown-menu a {
+      display: block;
+      padding: 10px 20px;
+      color: #f5f5f5;
+      font-size: 15px;
+      transition: padding-left 0.2s ease;
+    }
+    .dropdown-menu a:hover {
+      background-color: var(--primary-color);
+      padding-left: 25px;
+    }
+    .dropdown-menu a:first-child {
+      border-top-left-radius: 8px;
+      border-top-right-radius: 8px;
+    }
+    .dropdown-menu a:last-child {
+      border-bottom-left-radius: 8px;
+      border-bottom-right-radius: 8px;
+    }
+    
+    /* PROFILE STYLES */
+    .profile-dropdown {
+      position: relative;
+      margin-left: 10px;
+    }
+    .profile-pic-container {
+      width: 44px;
+      height: 44px;
+      border-radius: 50%;
+      overflow: hidden;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      border: 2px solid var(--primary-color);
+      transition: all 0.3s ease;
+      background-color: #333;
+    }
+    .profile-pic {
+      width: 100%;
+      height: 100%;
+      object-fit: cover;
+      cursor: pointer;
+      transition: all 0.3s ease;
+    }
+    .profile-pic-container:hover {
+      transform: scale(1.1);
+      border-color: #ffeb3b;
+    }
+    .profile-menu {
+      position: absolute;
+      top: 100%;
+      right: 0;
+      background-color: #1a1a1a;
+      border-radius: 8px;
+      padding: 10px 0;
+      min-width: 150px;
+      box-shadow: 0 8px 16px rgba(0,0,0,0.3);
+      opacity: 0;
+      visibility: hidden;
+      transition: all 0.3s ease;
+      z-index: 1001;
+    }
+    .profile-dropdown.active .profile-menu {
+      opacity: 1;
+      visibility: visible;
+      transform: translateY(10px);
+    }
+    .profile-menu a {
+      display: block;
+      padding: 10px 20px;
+      color: #f5f5f5;
+      font-size: 16px;
+      transition: all 0.2s ease;
+    }
+    .profile-menu a:hover {
+      background-color: var(--primary-color);
+      color: white;
+      padding-left: 25px;
+    }
+
+    /* MAIN CONTAINER */
+    .container {
+      max-width: 900px;
+      margin: 60px auto;
+      padding: 0 30px;
+      text-align: center;
+    }
+
+    /* HEADINGS */
+    h1 {
+      font-size: clamp(2.5rem, 5vw, 4.5rem);
+      color: var(--primary-color);
+      margin-bottom: 0;
+    }
+
+    .tagline {
+      font-size: clamp(1rem, 2vw, 1.5rem);
+      font-weight: 600;
+      margin-bottom: 40px;
+      color: var(--light-text);
+      font-style: italic;
+    }
+
+    /* FORM STYLES */
+    .search-container {
+      background-color: var(--darker-bg);
+      padding: 30px;
+      border-radius: 10px;
+      margin-bottom: 30px;
+      border: 1px solid var(--border-color);
+      box-shadow: 0 0 15px rgba(0, 0, 0, 0.5);
+    }
+
+    .input-group {
+      margin-bottom: 20px;
+      text-align: left;
+    }
+    .input-group label {
+      display: block;
+      margin-bottom: 8px;
+      font-weight: 600;
+      color: var(--primary-color);
+    }
+    .input-group input,
+    .input-group select {
+      width: 90%;
+      padding: 12px 15px;
+      font-size: 1rem;
+      border-radius: 8px;
+      border: 2px solid var(--border-color);
+      background-color: var(--dark-bg);
+      color: var(--light-text);
+      transition: border-color 0.3s ease;
+    }
+    .input-group input:focus,
+    .input-group select:focus {
+      outline: none;
+      border-color: var(--primary-color);
+    }
+
+    /* DYNAMIC FIELDS */
+    .dynamic-fields {
+      background-color: var(--dark-bg);
+      padding: 15px;
+      border-radius: 8px;
+      margin-bottom: 20px;
+      border-left: 3px solid var(--accent-color);
+    }
+    .dynamic-fields .input-group input,
+    .dynamic-fields .input-group select {
+      width: 90%;
+    }
+
+    /* BUTTONS */
+    .search-btn {
+      background-color: var(--primary-color);
+      color: white;
+      padding: 14px 30px;
+      font-size: 1.1rem;
+      font-weight: 600;
+      border: none;
+      border-radius: 8px;
+      cursor: pointer;
+      transition: all 0.3s ease;
+      margin: 30px auto 0;
+      display: block;
+      box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+      width: auto;
+    }
+    .search-btn:hover {
+      background-color: var(--button-hover);
+      transform: translateY(-2px);
+      box-shadow: 0 6px 8px rgba(0, 0, 0, 0.15);
+    }
+
+    /* RESULTS SECTION */
+    .results-container {
+      margin-top: 30px;
+      text-align: left;
+    }
+    .result-item {
+      background-color: var(--darker-bg);
+      padding: 20px;
+      margin-bottom: 15px;
+      border-radius: 8px;
+      transition: all 0.3s ease;
+      border-left: 4px solid var(--primary-color);
+      cursor: pointer;
+      border: 1px solid var(--border-color);
+    }
+    .result-item:hover {
+      transform: translateX(5px);
+      background-color: #1a1a1a;
+    }
+    .result-item.selected {
+      border-left: 4px solid var(--secondary-color);
+      background-color: #1a1a1a;
+    }
+    .result-title {
+      font-size: 1.2rem;
+      font-weight: 600;
+      color: var(--light-text);
+      margin-bottom: 5px;
+    }
+    .result-date {
+      font-size: 0.9rem;
+      color: #aaa;
+      margin-bottom: 8px;
+    }
+    .result-price {
+      color: var(--secondary-color);
+      font-weight: bold;
+      font-size: 1.1rem;
+      margin-bottom: 10px;
+    }
+    .result-details {
+      color: #ccc;
+      margin-bottom: 10px;
+    }
+    .result-link {
+      display: inline-block;
+      padding: 8px 15px;
+      background-color: var(--accent-color);
+      color: white;
+      text-decoration: none;
+      border-radius: 5px;
+      font-weight: 600;
+      transition: all 0.3s ease;
+    }
+    .result-link:hover {
+      background-color: var(--button-accent);
+      transform: translateY(-1px);
+    }
+
+    /* LOADING STATE */
+    .loading {
+      display: none;
+      margin: 20px 0;
+      text-align: center;
+    }
+    .spinner {
+      border: 4px solid rgba(255, 255, 255, 0.3);
+      border-radius: 50%;
+      border-top: 4px solid var(--primary-color);
+      width: 30px;
+      height: 30px;
+      animation: spin 1s linear infinite;
+      margin: 0 auto 10px;
+    }
+    @keyframes spin {
+      0% { transform: rotate(0deg); }
+      100% { transform: rotate(360deg); }
+    }
+
+    /* NO RESULTS STATE */
+    .no-results {
+      text-align: center;
+      padding: 30px;
+      background-color: var(--darker-bg);
+      border-radius: 8px;
+      border: 1px solid var(--border-color);
+    }
+
+    /* RESPONSIVE STYLES */
+    @media (max-width: 768px) {
+      .navbar {
+        padding: 15px 20px;
+        flex-direction: column;
+        text-align: center;
+      }
+      .navbar-links {
+        margin-top: 15px;
+        flex-wrap: wrap;
+        justify-content: center;
+      }
+      .navbar a {
+        margin: 5px 10px;
+      }
+      .container {
+        margin: 30px auto;
+        padding: 0 20px;
+      }
+      .search-container {
+        padding: 20px;
+      }
+      .input-group input,
+      .input-group select {
+        width: 100%;
+      }
+      .dynamic-fields .input-group input,
+      .dynamic-fields .input-group select {
+        width: 100%;
+      }
+    }
+  </style>
+</head>
+<body>
+  <!-- Navigation Bar -->
+  <div class="navbar" id="navbar">
+    <div>
+      <img src="logo.png" alt="Logo">
+    </div>
+    <div class="navbar-links">
+      <div class="plus-button">
+        +
+        <div class="dropdown-menu">
+          <a href="wish.html">My Wish</a>
+          <a href="aspiration.html">My Aspiration</a>
+        </div>
+      </div>
+      <a href="dashboard.html">Home</a>
+      <a href="BudgetTrack.html">Track</a>
+      <a href="Recharge.html">Recharge</a>
+      <a href="about.html">About Us</a>
+      <div class="profile-dropdown">
+        <div class="profile-pic-container">
+          <img id="profilePicture" class="profile-pic" src="pfp.png" alt="Profile">
+        </div>
+        <div class="profile-menu">
+          <a href="pf.html">Profile</a>
+          <a href="login.html">Logout</a>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <div class="container">
+    <h1>Explore Investments</h1>
+    <div class="tagline">Find the best long-term investment opportunities in India</div>
+
+    <div class="search-container" style="background-color: var(--darker-bg); padding: 30px; border-radius: 10px; margin-bottom: 30px; border: 1px solid var(--border-color); box-shadow: 0 0 15px rgba(0, 0, 0, 0.5);">
+      <div class="input-group">
+        <label for="investment-type">What I'm looking for</label>
+        <select id="investment-type" style="width: 90%; padding: 12px 15px; font-size: 1rem; border-radius: 8px; border: 2px solid var(--border-color); background-color: var(--dark-bg); color: var(--light-text); transition: border-color 0.3s ease;">
+          <option value="">Select investment type</option>
+          <option value="car">Car</option>
+          <option value="land">Land/Plot</option>
+          <option value="apartment">Apartment</option>
+          <option value="house">Independent House</option>
+          <option value="business">Business for Sale</option>
+          <option value="commercial">Commercial Property</option>
+          <option value="gold">Gold</option>
+          <option value="custom">Custom (Type your own)</option>
+        </select>
+      </div>
+      <div id="dynamic-fields-container"></div>
+      <div class="input-group" id="custom-input-group" style="display: none;">
+        <label for="custom-input">What are you looking for?</label>
+        <input type="text" id="custom-input" placeholder="Type exactly what you're searching for" style="width: 90%; padding: 12px 15px; font-size: 1rem; border-radius: 8px; border: 2px solid var(--border-color); background-color: var(--dark-bg); color: var(--light-text); transition: border-color 0.3s ease;">
+      </div>
+      <div class="input-group">
+        <label for="location">Preferred Location (optional)</label>
+        <input type="text" id="location" placeholder="e.g. Mumbai, Bangalore" style="width: 90%; padding: 12px 15px; font-size: 1rem; border-radius: 8px; border: 2px solid var(--border-color); background-color: var(--dark-bg); color: var(--light-text); transition: border-color 0.3s ease;">
+      </div>
+      <button class="search-btn" id="search-btn" style="background-color: var(--primary-color); color: white; padding: 14px 30px; font-size: 1.1rem; font-weight: 600; border: none; border-radius: 8px; cursor: pointer; transition: all 0.3s ease; margin: 30px auto 0; display: block; box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1); width: auto;">Find Investments</button>
+    </div>
+
+    <div class="loading" id="loading">
+      <div class="spinner"></div>
+      <p>Searching for the best investment options...</p>
+    </div>
+
+    <div class="results-container" id="results-container"></div>
+  </div>
+
+  <script>
+    // Base URL of the Node.js API server - change to your deployed server URL
+    const API_BASE_URL = 'http://localhost:3000';
+
+    document.addEventListener('DOMContentLoaded', () => {
+      // Plus-button dropdown
+      const plusButton = document.querySelector('.plus-button');
+      plusButton.addEventListener('click', e => {
+        e.stopPropagation();
+        plusButton.classList.toggle('active');
+      });
+      
+      // Profile dropdown functionality
+      const profileDropdown = document.querySelector('.profile-dropdown');
+      profileDropdown.addEventListener('click', function(e) {
+        e.stopPropagation();
+        this.classList.toggle('active');
+      });
+      
+      // Close dropdowns when clicking outside
+      document.addEventListener('click', () => {
+        plusButton.classList.remove('active');
+        profileDropdown.classList.remove('active');
+      });
+
+      // Load profile picture from localStorage if available
+      try {
+        const profilePic = document.getElementById('profilePicture');
+        const profileData = JSON.parse(localStorage.getItem('profileData'));
+        if (profileData && profileData.profilePicture) {
+          profilePic.src = profileData.profilePicture;
+        }
+      } catch (e) {
+        console.error('Error parsing profile data from localStorage:', e);
+      }
+
+      // Navbar shrink
+      const navbar = document.getElementById('navbar');
+      window.addEventListener('scroll', () => {
+        if (window.scrollY > 50) navbar.classList.add('shrink');
+        else navbar.classList.remove('shrink');
+      });
+
+      // Elements
+      const searchBtn = document.getElementById('search-btn');
+      const investmentType = document.getElementById('investment-type');
+      const locationInput = document.getElementById('location');
+      const resultsContainer = document.getElementById('results-container');
+      const loadingElement = document.getElementById('loading');
+      const dynamicFieldsContainer = document.getElementById('dynamic-fields-container');
+      const customInputGroup = document.getElementById('custom-input-group');
+      const customInput = document.getElementById('custom-input');
+
+      investmentType.addEventListener('change', () => {
+        const type = investmentType.value;
+        dynamicFieldsContainer.innerHTML = '';
+        customInputGroup.style.display = 'none';
+        if (type === 'custom') {
+          customInputGroup.style.display = 'block';
+          return;
+        }
+        if (!type) return;
+        const dynamicFields = document.createElement('div');
+        dynamicFields.className = 'dynamic-fields';
+        switch(type) {
+          case 'car':
+            dynamicFields.innerHTML = `
+              <div class="input-group">
+                <label for="car-brand">Brand</label>
+                <input type="text" id="car-brand" placeholder="e.g. Maruti, Hyundai, Tata">
+              </div>
+              <div class="input-group">
+                <label for="car-model">Model</label>
+                <input type="text" id="car-model" placeholder="e.g. Swift, i20, Nexon">
+              </div>
+              <div class="input-group">
+                <label for="car-type">Type</label>
+                <select id="car-type">
+                  <option value="">Any type</option>
+                  <option value="hatchback">Hatchback</option>
+                  <option value="sedan">Sedan</option>
+                  <option value="suv">SUV</option>
+                  <option value="coupe">Coupe</option>
+                  <option value="convertible">Convertible</option>
+                </select>
+              </div>
+              <div class="input-group">
+                <label for="car-fuel">Fuel Type</label>
+                <select id="car-fuel">
+                  <option value="">Any fuel</option>
+                  <option value="petrol">Petrol</option>
+                  <option value="diesel">Diesel</option>
+                  <option value="cng">CNG</option>
+                  <option value="electric">Electric</option>
+                  <option value="hybrid">Hybrid</option>
+                </select>
+              </div>
+              <div class="input-group">
+                <label for="car-year">Year (optional)</label>
+                <input type="number" id="car-year" placeholder="e.g. 2018" min="1990" max="${new Date().getFullYear()}">
+              </div>
+            `;
+            break;
+          case 'land':
+            dynamicFields.innerHTML = `
+              <div class="input-group">
+                <label for="land-area">Area (sq.ft)</label>
+                <input type="number" id="land-area" placeholder="e.g. 1000">
+              </div>
+              <div class="input-group">
+                <label for="land-type">Plot Type</label>
+                <select id="land-type">
+                  <option value="">Any type</option>
+                  <option value="residential">Residential</option>
+                  <option value="commercial">Commercial</option>
+                  <option value="agricultural">Agricultural</option>
+                  <option value="industrial">Industrial</option>
+                </select>
+              </div>
+              <div class="input-group">
+                <label for="land-price-range">Price Range</label>
+                <select id="land-price-range">
+                  <option value="">Any price</option>
+                  <option value="0-1000000">Under ₹10 Lakhs</option>
+                  <option value="1000000-5000000">₹10-50 Lakhs</option>
+                  <option value="5000000-10000000">₹50 Lakhs - 1 Crore</option>
+                  <option value="10000000-50000000">₹1-5 Crore</option>
+                  <option value="50000000-100000000">Above ₹5 Crore</option>
+                </select>
+              </div>
+            `;
+            break;
+          case 'apartment':
+            dynamicFields.innerHTML = `
+              <div class="input-group">
+                <label for="apartment-type">Type</label>
+                <select id="apartment-type">
+                  <option value="">Any type</option>
+                  <option value="1bhk">1BHK</option>
+                  <option value="2bhk">2BHK</option>
+                  <option value="3bhk">3BHK</option>
+                  <option value="4bhk">4BHK</option>
+                  <option value="penthouse">Penthouse</option>
+                </select>
+              </div>
+              <div class="input-group">
+                <label for="apartment-area">Area (sq.ft)</label>
+                <input type="number" id="apartment-area" placeholder="e.g. 800">
+              </div>
+              <div class="input-group">
+                <label for="apartment-furnishing">Furnishing</label>
+                <select id="apartment-furnishing">
+                  <option value="">Any furnishing</option>
+                  <option value="unfurnished">Unfurnished</option>
+                  <option value="semi-furnished">Semi-Furnished</option>
+                  <option value="fully-furnished">Fully Furnished</option>
+                </select>
+              </div>
+              <div class="input-group">
+                <label for="apartment-floor">Floor (optional)</label>
+                <input type="number" id="apartment-floor" placeholder="e.g. 5">
+              </div>
+            `;
+            break;
+          case 'house':
+            dynamicFields.innerHTML = `
+              <div class="input-group">
+                <label for="house-type">Type</label>
+                <select id="house-type">
+                  <option value="">Any type</option>
+                  <option value="villa">Villa</option>
+                  <option value="bungalow">Bungalow</option>
+                  <option value="row-house">Row House</option>
+                  <option value="farm-house">Farm House</option>
+                </select>
+              </div>
+              <div class="input-group">
+                <label for="house-bedrooms">Bedrooms</label>
+                <select id="house-bedrooms">
+                  <option value="">Any</option>
+                  <option value="1">1</option>
+                  <option value="2">2</option>
+                  <option value="3">3</option>
+                  <option value="4">4</option>
+                  <option value="5+">5+</option>
+                </select>
+              </div>
+              <div class="input-group">
+                <label for="house-area">Area (sq.ft)</label>
+                <input type="number" id="house-area" placeholder="e.g. 1500">
+              </div>
+              <div class="input-group">
+                <label for="house-furnishing">Furnishing</label>
+                <select id="house-furnishing">
+                  <option value="">Any furnishing</option>
+                  <option value="unfurnished">Unfurnished</option>
+                  <option value="semi-furnished">Semi-Furnished</option>
+                  <option value="fully-furnished">Fully Furnished</option>
+                </select>
+              </div>
+            `;
+            break;
+          case 'business':
+            dynamicFields.innerHTML = `
+              <div class="input-group">
+                <label for="business-type">Business Type</label>
+                <input type="text" id="business-type" placeholder="e.g. Restaurant, Retail Store">
+              </div>
+              <div class="input-group">
+                <label for="business-industry">Industry</label>
+                <select id="business-industry">
+                  <option value="">Any industry</option>
+                  <option value="food">Food & Beverage</option>
+                  <option value="retail">Retail</option>
+                  <option value="manufacturing">Manufacturing</option>
+                  <option value="service">Service</option>
+                  <option value="technology">Technology</option>
+                </select>
+              </div>
+              <div class="input-group">
+                <label for="business-age">Business Age (years)</label>
+                <input type="number" id="business-age" placeholder="e.g. 5">
+              </div>
+              <div class="input-group">
+                <label for="business-revenue">Annual Revenue (₹)</label>
+                <input type="number" id="business-revenue" placeholder="e.g. 5000000">
+              </div>
+            `;
+            break;
+          case 'commercial':
+            dynamicFields.innerHTML = `
+              <div class="input-group">
+                <label for="commercial-type">Property Type</label>
+                <select id="commercial-type">
+                  <option value="">Any type</option>
+                  <option value="office">Office Space</option>
+                  <option value="retail">Retail Shop</option>
+                  <option value="warehouse">Warehouse</option>
+                  <option value="hotel">Hotel</option>
+                  <option value="industrial">Industrial</option>
+                </select>
+              </div>
+              <div class="input-group">
+                <label for="commercial-area">Area (sq.ft)</label>
+                <input type="number" id="commercial-area" placeholder="e.g. 2000">
+              </div>
+              <div class="input-group">
+                <label for="commercial-price-range">Price Range</label>
+                <select id="commercial-price-range">
+                  <option value="">Any price</option>
+                  <option value="0-5000000">Under ₹50 Lakhs</option>
+                  <option value="5000000-20000000">₹50 Lakhs - 2 Crore</option>
+                  <option value="20000000-50000000">₹2-5 Crore</option>
+                  <option value="50000000-100000000">₹5-10 Crore</option>
+                  <option value="100000000-500000000">Above ₹10 Crore</option>
+                </select>
+              </div>
+            `;
+            break;
+          case 'gold':
+            dynamicFields.innerHTML = `
+              <div class="input-group">
+                <label for="gold-weight">Weight (grams)</label>
+                <input type="number" id="gold-weight" placeholder="e.g. 10" step="0.01">
+              </div>
+              <div class="input-group">
+                <label for="gold-purity">Purity</label>
+                <select id="gold-purity">
+                  <option value="">Any purity</option>
+                  <option value="18">18K</option>
+                  <option value="22">22K</option>
+                  <option value="24">24K</option>
+                </select>
+              </div>
+              <div class="input-group">
+                <label for="gold-type">Type</label>
+                <select id="gold-type">
+                  <option value="">Any type</option>
+                  <option value="jewelry">Jewelry</option>
+                  <option value="coins">Coins</option>
+                  <option value="bars">Bars</option>
+                  <option value="antique">Antique</option>
+                </select>
+              </div>
+            `;
+            break;
+        }
+        // extra specs for all except custom
+        if (investmentType.value !== 'custom') {
+          const extraSpecs = document.createElement('div');
+          extraSpecs.className = 'input-group';
+          extraSpecs.innerHTML = `
+            <label for="extra-specs">Extra Specifications (optional)</label>
+            <input type="text" id="extra-specs" placeholder="Any additional requirements">
+          `;
+          dynamicFields.appendChild(extraSpecs);
+        }
+        dynamicFieldsContainer.appendChild(dynamicFields);
+      });
+
+      searchBtn.addEventListener('click', async () => {
+        const type = investmentType.value;
+        if (!type) {
+          alert('Please select what you are looking for');
+          return;
+        }
+        
+        loadingElement.style.display = 'block';
+        resultsContainer.innerHTML = '';
+        
+        try {
+          // Collect search parameters
+          let queryParams = '';
+          if (type === 'custom') {
+            const customSearch = customInput.value.trim();
+            if (!customSearch) {
+              alert('Please enter what you are looking for');
+              loadingElement.style.display = 'none';
+              return;
+            }
+            queryParams = `query=${encodeURIComponent(customSearch)}`;
+          } else {
+            // Get all form data based on type
+            const formData = {};
+            
+            switch(type) {
+              case 'car':
+                formData.brand = document.getElementById('car-brand')?.value || '';
+                formData.model = document.getElementById('car-model')?.value || '';
+                formData.type = document.getElementById('car-type')?.value || '';
+                formData.fuel = document.getElementById('car-fuel')?.value || '';
+                formData.year = document.getElementById('car-year')?.value || '';
+                break;
+              case 'land':
+                formData.area = document.getElementById('land-area')?.value || '';
+                formData.type = document.getElementById('land-type')?.value || '';
+                formData.priceRange = document.getElementById('land-price-range')?.value || '';
+                break;
+              case 'apartment':
+                formData.type = document.getElementById('apartment-type')?.value || '';
+                formData.area = document.getElementById('apartment-area')?.value || '';
+                formData.furnishing = document.getElementById('apartment-furnishing')?.value || '';
+                formData.floor = document.getElementById('apartment-floor')?.value || '';
+                break;
+              case 'house':
+                formData.type = document.getElementById('house-type')?.value || '';
+                formData.bedrooms = document.getElementById('house-bedrooms')?.value || '';
+                formData.area = document.getElementById('house-area')?.value || '';
+                formData.furnishing = document.getElementById('house-furnishing')?.value || '';
+                break;
+              case 'business':
+                formData.type = document.getElementById('business-type')?.value || '';
+                formData.industry = document.getElementById('business-industry')?.value || '';
+                formData.age = document.getElementById('business-age')?.value || '';
+                formData.revenue = document.getElementById('business-revenue')?.value || '';
+                break;
+              case 'commercial':
+                formData.type = document.getElementById('commercial-type')?.value || '';
+                formData.area = document.getElementById('commercial-area')?.value || '';
+                formData.priceRange = document.getElementById('commercial-price-range')?.value || '';
+                break;
+              case 'gold':
+                formData.weight = document.getElementById('gold-weight')?.value || '';
+                formData.purity = document.getElementById('gold-purity')?.value || '';
+                formData.type = document.getElementById('gold-type')?.value || '';
+                break;
+            }
+            
+            // Add extra specs if available
+            const extraSpecs = document.getElementById('extra-specs')?.value || '';
+            if (extraSpecs) {
+              formData.specs = extraSpecs;
+            }
+            
+            // Convert to query string
+            queryParams = new URLSearchParams(formData).toString();
+          }
+          
+          // Add location if specified
+          const location = locationInput.value.trim();
+          const locationParam = location ? `&location=${encodeURIComponent(location)}` : '';
+          
+          // Call the API
+          const response = await fetch(`${API_BASE_URL}/api/search?type=${type}${queryParams ? '&' + queryParams : ''}${locationParam}`);
+          
+          if (!response.ok) {
+            throw new Error(`Server returned ${response.status}: ${response.statusText}`);
+          }
+          
+          const results = await response.json();
+          
+          // Display results
+          if (!results.length) {
+            resultsContainer.innerHTML = `
+              <div class="no-results">
+                <h3>No investment options found</h3>
+                <p>Try adjusting your search criteria or check back later for new listings.</p>
+              </div>
+            `;
+          } else {
+            resultsContainer.innerHTML = '';
+            results.forEach(r => {
+              const el = document.createElement('div');
+              el.className = 'result-item';
+              el.innerHTML = `
+                <div class="result-title">${r.title}</div>
+                <div class="result-date">Posted: ${new Date(r.date).toLocaleDateString('en-IN', {
+                  day: 'numeric', month: 'short', year: 'numeric'
+                })}</div>
+                <div class="result-price">₹${r.price.toLocaleString('en-IN')}</div>
+                <div class="result-details">
+                  ${r.details}<br>
+                  <strong>Location:</strong> ${r.location}<br>
+                  <strong>Source:</strong> ${r.source}
+                </div>
+                <a href="${r.url}" target="_blank" class="result-link">View on ${r.source}</a>
+              `;
+              
+              // Keep the double-click functionality to select an item
+              el.addEventListener('dblclick', () => {
+                localStorage.setItem('selectedAspiration', JSON.stringify({
+                  name: r.title,
+                  details: r.details,
+                  price: r.price,
+                  source: r.source,
+                  url: r.url,
+                  location: r.location,
+                  type
+                }));
+                window.location.href = 'aspiration.html';
+              });
+              
+              resultsContainer.appendChild(el);
+            });
+          }
+        } catch (error) {
+          console.error('Error fetching search results:', error);
+          resultsContainer.innerHTML = `
+            <div class="no-results">
+              <h3>Error fetching results</h3>
+              <p>There was a problem with the search. Please try again later.</p>
+              <p>${error.message}</p>
+            </div>
+          `;
+        } finally {
+          loadingElement.style.display = 'none';
+        }
+      });
+    });
+  </script>
+</body>
+<!-- Footer Section -->
+<footer style="background-color: #0d0d0d; color: #f5f5f5; font-family: 'Poppins', sans-serif; padding: 50px 0 20px; border-top: 1px solid #b3003c;">
+  <div style="max-width: 1200px; margin: 0 auto; padding: 0 20px;">
+    <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(250px, 1fr)); gap: 40px; margin-bottom: 40px;">
+      
+      <!-- About Column -->
+      <div>
+        <h3 style="color: #ff3366; font-size: 1.5rem; margin-bottom: 20px; position: relative; padding-bottom: 10px;">
+          About PennyWise
+          <span style="position: absolute; bottom: 0; left: 0; width: 60px; height: 2px; background: #ff3366;"></span>
+        </h3>
+        <p style="color: #ddd; line-height: 1.6; margin-bottom: 20px;">
+          Your personal financial companion helping you track expenses, manage budgets, and achieve your financial goals.
+        </p>
+        <div style="display: flex; gap: 15px;">
+          <a href="#" style="color: #f5f5f5; font-size: 1.5rem; transition: color 0.3s ease;"><i class="fab fa-facebook"></i></a>
+          <a href="https://x.com/pennywisecorps" target="_blank" style="color: #f5f5f5; font-size: 1.5rem; transition: color 0.3s ease;">
+            <i class="fab fa-twitter"></i>
+          </a>
+          <a href="https://www.instagram.com/pennywisecorps" target="_blank" style="color: #f5f5f5; font-size: 1.5rem; transition: color 0.3s ease;">
+            <i class="fab fa-instagram"></i>
+          </a>
+          <a href="#" style="color: #f5f5f5; font-size: 1.5rem; transition: color 0.3s ease;"><i class="fab fa-linkedin"></i></a>
+        </div>
+      </div>
+
+      <!-- Quick Links Column -->
+      <div>
+        <h3 style="color: #ff3366; font-size: 1.5rem; margin-bottom: 20px; position: relative; padding-bottom: 10px;">
+          Quick Links
+          <span style="position: absolute; bottom: 0; left: 0; width: 60px; height: 2px; background: #ff3366;"></span>
+        </h3>
+        <ul style="list-style: none; padding: 0; margin: 0;">
+          <li style="margin-bottom: 10px;"><a href="dashboard.html" style="color: #ddd; text-decoration: none; transition: color 0.3s ease; display: block;">Home</a></li>
+          <li style="margin-bottom: 10px;"><a href="BudgetTrack.html" style="color: #ddd; text-decoration: none; transition: color 0.3s ease; display: block;">Track Budget</a></li>
+          <li style="margin-bottom: 10px;"><a href="Recharge.html" style="color: #ddd; text-decoration: none; transition: color 0.3s ease; display: block;">Recharge</a></li>
+          <li style="margin-bottom: 10px;"><a href="about.html" style="color: #ddd; text-decoration: none; transition: color 0.3s ease; display: block;">About Us</a></li>
+          <li style="margin-bottom: 10px;"><a href="login.html" style="color: #ddd; text-decoration: none; transition: color 0.3s ease; display: block;">Login/Signup</a></li>
+        </ul>
+      </div>
+
+      <!-- Contact Column -->
+      <div>
+        <h3 style="color: #ff3366; font-size: 1.5rem; margin-bottom: 20px; position: relative; padding-bottom: 10px;">
+          Contact Us
+          <span style="position: absolute; bottom: 0; left: 0; width: 60px; height: 2px; background: #ff3366;"></span>
+        </h3>
+        <ul style="list-style: none; padding: 0; margin: 0;">
+          <li style="margin-bottom: 15px; display: flex; align-items: flex-start;">
+            <i class="fas fa-map-marker-alt" style="color: #ff3366; margin-right: 10px; margin-top: 3px;"></i>
+            <span style="color: #ddd;">123 Financial Street, Money City, MC 12345</span>
+          </li>
+          <li style="margin-bottom: 15px; display: flex; align-items: center;">
+            <i class="fas fa-phone-alt" style="color: #ff3366; margin-right: 10px;"></i>
+            <span style="color: #ddd;">+91 0123456789</span>
+          </li>
+          <li style="margin-bottom: 15px; display: flex; align-items: center;">
+            <i class="fas fa-envelope" style="color: #ff3366; margin-right: 10px;"></i>
+            <span style="color: #ddd;">pennywisecorps@gmail.com</span>
+          </li>
+        </ul>
+      </div>
+
+      <!-- Newsletter Column -->
+      <div>
+        <h3 style="color: #ff3366; font-size: 1.5rem; margin-bottom: 20px; position: relative; padding-bottom: 10px;">
+          Newsletter
+          <span style="position: absolute; bottom: 0; left: 0; width: 60px; height: 2px; background: #ff3366;"></span>
+        </h3>
+        <p style="color: #ddd; line-height: 1.6; margin-bottom: 20px;">
+          Subscribe to our newsletter for financial tips and updates.
+        </p>
+        <form style="display: flex; flex-wrap: wrap; gap: 10px; margin-top: 10px;">
+          <input type="email" placeholder="Your email" 
+                 style="flex: 1; min-width: 200px; padding: 12px 15px; border: none; border-radius: 5px; font-family: 'Poppins', sans-serif;">
+          <button type="submit" 
+                  style="background-color: #ff3366; color: white; border: none; padding: 12px 20px; border-radius: 5px; cursor: pointer; transition: background-color 0.3s ease;">
+            <i class="fas fa-paper-plane"></i>
+          </button>
+        </form>
+      </div>
+    </div>
+
+    <!-- Copyright -->
+    <div style="border-top: 1px solid #333; padding-top: 30px; text-align: center;">
+      <p style="color: #aaa; margin: 0 0 10px;">
+        &copy; 2025 PennyWise. All Rights Reserved.
+      </p>
+      <div style="display: flex; justify-content: center; flex-wrap: wrap; gap: 20px;">
+        <a href="#" style="color: #aaa; text-decoration: none; transition: color 0.3s ease;">Privacy Policy</a>
+        <a href="#" style="color: #aaa; text-decoration: none; transition: color 0.3s ease;">Terms of Service</a>
+        <a href="#" style="color: #aaa; text-decoration: none; transition: color 0.3s ease;">Sitemap</a>
+      </div>
+    </div>
+
+  </div>
+</footer>
+
+</html>

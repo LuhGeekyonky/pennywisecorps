@@ -3,7 +3,7 @@ const cors = require('cors');
 const axios = require('axios');
 const NodeCache = require('node-cache');
 const dotenv = require('dotenv');
-const path = require('path'); // Added path module
+const path = require('path');
 
 // Load environment variables
 dotenv.config();
@@ -15,7 +15,7 @@ const cache = new NodeCache({ stdTTL: 3600 }); // Cache results for 1 hour
 // Middleware
 app.use(cors());
 app.use(express.json());
-app.use(express.static(path.join(__dirname, 'public'))); // Added static file serving
+app.use(express.static(path.join(__dirname, 'public'))); // Serve static files from public directory
 
 // API key - ideally from env vars, but we include fallback functionality
 const RAPIDAPI_KEY = process.env.RAPIDAPI_KEY || '';
@@ -38,8 +38,13 @@ const cacheMiddleware = (req, res, next) => {
   next();
 };
 
-// Root endpoint for health check
+// Serve login.html from root directory when accessing base URL
 app.get('/', (req, res) => {
+  res.sendFile(path.join(__dirname, 'login.html'));
+});
+
+// Health check endpoint
+app.get('/api/health', (req, res) => {
   res.json({ status: 'API is running' });
 });
 
